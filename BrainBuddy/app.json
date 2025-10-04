@@ -40,7 +40,11 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      ["expo-speech-recognition", {
+        "microphonePermission": "Pozwól $(PRODUCT_NAME) używać mikrofonu.",
+        "speechRecognitionPermission": "Pozwól $(PRODUCT_NAME) rozpoznawać mowę."
+      }]
     ],
     "experiments": {
       "typedRoutes": true,

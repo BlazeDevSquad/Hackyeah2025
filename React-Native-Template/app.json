@@ -28,7 +28,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#fff"
       },
-      "package": "com.shipmobilefast.app",
+      "package": "com.hairbuddydev.app",
       "permissions": [
         "com.google.android.gms.permission.AD_ID",
         "android.permission.CAMERA"
@@ -40,11 +40,11 @@
           "data": [
             {
               "scheme": "https",
-              "host": "shipmobilefast.com",
+              "host": "brainbuddydev.com",
               "pathPrefix": "/"
             },
             {
-              "scheme": "com.shipmobilefast.app"
+              "scheme": "com.brainbuddydev.app"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
