@@ -1,7 +1,7 @@
-import { Tabs } from "expo-router";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { View, Text, StyleSheet } from 'react-native';
-import { useThemeColor } from "@/hooks/use-theme-color";
+import {Tabs} from "expo-router";
+import {MaterialCommunityIcons} from '@expo/vector-icons';
+import {Platform, StyleSheet, View} from 'react-native';
+import {useThemeColor} from "@/hooks/use-theme-color";
 
 const TabIcon = ({ iconName, color }: { iconName: any; color: string }) => (
     <View style={styles.tabContainer}>
@@ -20,7 +20,7 @@ export default function TabsLayout() {
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
-                    height: 100,
+                    height: Platform.OS === "ios" ? 80 : 100,
                     borderTopWidth: 1,
                     borderTopColor: borderColor,
                     backgroundColor: backgroundColor,
