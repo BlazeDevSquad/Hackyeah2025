@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { styles } from '../constants/styles';
 import { useThemedStyles } from '../hooks/use-themed-styles';
-import { styles } from '../styles';
 
 type Props = {
   transcript: string;

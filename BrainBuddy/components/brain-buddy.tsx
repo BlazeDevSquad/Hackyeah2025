@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
+import { styles } from '../constants/styles';
 import { useSpeechRecognition } from '../hooks/use-speech-recognition';
 import { useThemedStyles } from '../hooks/use-themed-styles';
-import { styles } from '../styles';
 import { Header } from './header';
 import { Instructions } from './instructions';
 import { PreviewBox } from './preview-box';
