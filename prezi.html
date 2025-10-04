@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BrainBuddy — Pitch Deck</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#0a0b10;
+    --muted:#3b4054;           /* mocniejszy kontrast */
+    --grad1:#eef2ff;
+    --grad2:#ffffff;
+    --accent-a:#cf56ff;
+    --accent-b:#6bd3ff;
+    --card:#ffffff;
+    --stroke:#e6e8f1;          /* ciemniejsza ramka */
+    --shadow:0 10px 30px rgba(14,20,33,.06);
+    --maxw:1280px;             /* szerzej */
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 720px at 70% -10%, rgba(207,86,255,0.10), transparent 60%),
+      radial-gradient(900px 600px at 110% 60%, rgba(107,211,255,0.10), transparent 60%),
+      linear-gradient(180deg,var(--grad2),#fff 40%);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+
+  /* Slajd = cała strona */
+  .slide{
+    min-height:100svh;
+    display:flex; align-items:center;
+    padding: clamp(72px, 9vh, 120px) 28px;  /* więcej oddechu */
+    scroll-snap-align:start;
+  }
+  main{scroll-snap-type:y mandatory}
+  .container{width:100%; max-width:var(--maxw); margin:0 auto; display:grid; gap:40px}
+  .cols{display:grid; grid-template-columns:1.15fr .95fr; gap:56px}
+  @media (max-width:1100px){ .cols{grid-template-columns:1fr; gap:28px} }
+
+  /* Typografia */
+  .eyebrow{
+    letter-spacing:.18em; text-transform:uppercase; font-weight:700;
+    font-size:13px; color:#6b7188;
+  }
+  h1,h2{margin:0}
+  .huge{
+    font-size: clamp(56px, 9.5vw, 118px);
+    line-height:.94; letter-spacing:-.02em; font-weight:800;
+  }
+  .title{
+    font-size: clamp(40px, 5.5vw, 68px);
+    line-height:1.03; letter-spacing:-.012em; font-weight:800;
+  }
+  .lead{
+    font-size: clamp(20px, 2.4vw, 24px);   /* większe leady */
+    color:#1f2432; line-height:1.5;
+  }
+  p, li{font-size: clamp(17px, 1.9vw, 20px)} /* baza w górę */
+  .muted{color:var(--muted)}
+  .gtext{background: linear-gradient(180deg, var(--accent-a), var(--accent-b));
+         -webkit-background-clip:text; background-clip:text; color:transparent;}
+
+  /* Obraz/placeholder */
+  .visual{
+    aspect-ratio: 4/3; border-radius:32px; overflow:hidden;
+    background:
+      radial-gradient(140% 100% at 110% 10%, #e8f8ff 0%, transparent 45%),
+      radial-gradient(120% 90% at -10% 100%, #fbe8ff 0%, transparent 50%),
+      linear-gradient(180deg,#f6f8ff,#fff);
+    border:1px solid var(--stroke);
+    box-shadow:var(--shadow);
+    display:grid; place-items:center; padding:28px;
+  }
+  .visual img{max-width:100%; height:auto; display:block}
+
+  /* Karty / listy */
+  .card{
+    border:1px solid var(--stroke); border-radius:24px;
+    background:var(--card); padding:26px; box-shadow:var(--shadow);
+  }
+  .list{display:grid; gap:14px; margin:10px 0}
+  .list li{line-height:1.6}
+  .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:22px}
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:22px}
+  @media (max-width:1100px){ .grid-3,.grid-2{grid-template-columns:1fr} }
+
+  blockquote{margin:0; font-size: clamp(18px, 2vw, 22px); line-height:1.55}
+  .person{margin-top:10px; color:#2f3445; font-weight:700}
+  .sep{height:1px; background:var(--stroke); width:100%; margin:12px 0 24px}
+  .pill{display:inline-block; padding:10px 16px; border-radius:999px; border:1px solid var(--stroke); background:#fff; color:#262b39; font-weight:700}
+  .space{height:18px}
+</style>
+</head>
+<body>
+
+<main>
+  <!-- SLIDE 1: Tytuł / Value -->
+  <section class="slide">
+    <div class="container cols">
+      <div>
+        <div class="huge gtext">Mów.<br/>Planuj.<br/>Biohackuj.</div>
+        <div class="space"></div>
+        <h2 class="title">Twój <span class="gtext">AI-mózg</span>, który trzyma życie w ryzach.</h2>
+        <p class="lead">Powiedz, co masz do zrobienia. BrainBuddy słucha, porządkuje, ustala priorytety i układa plan, który pasuje do prawdziwego życia. Kiedy pytasz „Co teraz?”, zawsze dostajesz właściwy następny krok.</p>
+        <p class="muted" style="font-weight:600">🎙️ Głos • 🗓️ Kalendarz • ⚡ Dynamiczne dostosowanie • 🧠 Uczenie nawyków</p>
+      </div>
+      <div class="visual">
+        <!-- Podmień na swój hero obraz 16:9 -->
+        <img alt="Astronauta z mózgiem-AI w wizjerze" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' width='1200' height='900'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop stop-color='%23cf56ff'/><stop offset='1' stop-color='%236bd3ff'/></linearGradient></defs><rect width='100%' height='100%' fill='white'/><circle cx='600' cy='450' r='260' fill='url(%23g)' opacity='0.22'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Inter' font-size='46' fill='%238a92a7'>Wstaw tutaj grafikę hero</text></svg>"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2: Problem -->
+  <section class="slide">
+    <div class="container cols">
+      <div>
+        <div class="eyebrow">Problem</div>
+        <h2 class="title">Funkcje wykonawcze są przeciążone.</h2>
+        <p class="lead">Osoby z ADHD i ludzie bardzo zapracowani zmagają się z planowaniem, priorytetyzacją i przełączaniem kontekstu. Idealne listy „to-do” nie wytrzymują zderzenia z rzeczywistością.</p>
+        <ul class="list">
+          <li><b>Brak jasnego „co teraz”.</b> Decyzje ad-hoc spalają uwagę.</li>
+          <li><b>Mały poślizg psuje dzień.</b> Harmonogram nie reaguje dynamicznie.</li>
+          <li><b>Plan ≠ energia.</b> Narzędzia nie uczą się Twojego tempa i pór dnia.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Dlaczego obecne narzędzia nie wystarczą?</div>
+        <div class="sep"></div>
+        <ul class="list">
+          <li>Listy zadań nie podpowiadają <i>kontekstowego</i> następnego kroku.</li>
+          <li>Brak automatycznej rekonfiguracji dnia przy zmianach.</li>
+          <li>Brak modelu Twojej energii i nawyków pracy.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: Rozwiązanie -->
+  <section class="slide">
+    <div class="container cols">
+      <div>
+        <div class="eyebrow">Rozwiązanie</div>
+        <h2 class="title">BrainBuddy — głosowy asystent, który <span class="gtext">planuje za Ciebie</span>.</h2>
+        <ul class="list">
+          <li>🎙️ <b>Powiedz</b> co masz do zrobienia — najszybszy input.</li>
+          <li>🗓️ <b>Plan dzienny</b> — priorytety, terminy, estymacje, kalendarz.</li>
+          <li>⚡ <b>Dynamiczne dostosowanie</b> — gdy coś wypadnie, plan się układa na nowo.</li>
+          <li>🧠 <b>Uczenie nawyków</b> — dopasowanie do realnej energii i tempa.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="eyebrow">One-liner</div>
+        <div class="sep"></div>
+        <p class="lead" style="font-weight:800">„Powiedz, co masz do zrobienia — BrainBuddy ułoży plan i powie Ci, co zrobić teraz.”</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: Opinie / Walidacja -->
+  <section class="slide">
+    <div class="container">
+      <div class="eyebrow">Walidacja</div>
+      <h2 class="title">„Wreszcie nie przepisuję zadań dzień w dzień.”</h2>
+      <div class="grid-3" style="margin-top:22px">
+        <div class="card">
+          <blockquote>„Największy zysk? Pytam <i>co teraz</i> i zaczynam bez 20 minut kręcenia się.”</blockquote>
+          <div class="person">Agnieszka — PM (ADHD), Warszawa</div>
+        </div>
+        <div class="card">
+          <blockquote>„Plan sam się układa, gdy wpadnie call. Bez poczucia winy, z nowym, jasnym planem.”</blockquote>
+          <div class="person">Michał — Software Engineer, Kraków</div>
+        </div>
+        <div class="card">
+          <blockquote>„Mówienie do telefonu jest naturalne. System rozumie, że po 15:00 mam mniej energii.”</blockquote>
+          <div class="person">Ola — Studentka, Gdańsk</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: Profil klienta -->
+  <section class="slide">
+    <div class="container cols">
+      <div>
+        <div class="eyebrow">Profil klienta</div>
+        <h2 class="title">Kto najbardziej skorzysta?</h2>
+        <ul class="list">
+          <li>🧩 <b>Osoby z ADHD</b> — wsparcie funkcji wykonawczych.</li>
+          <li>💼 <b>Zapracowani profesjonaliści</b> — wiele wątków, presja terminów.</li>
+          <li>🎓 <b>Studenci / twórcy</b> — jasny start i rytm pracy.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Jobs-to-be-done</div>
+        <div class="sep"></div>
+        <ul class="list">
+          <li>Zmniejszyć „czas rozruchu” i liczbę decyzji ad-hoc.</li>
+          <li>Utrzymać progres mimo zakłóceń (przetasowania planu).</li>
+          <li>Dopasować plan do energii, nie tylko do kalendarza.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: Roadmap -->
+  <section class="slide">
+    <div class="container">
+      <div class="eyebrow">Roadmap</div>
+      <h2 class="title">Od MVP do asystenta, który „czuje” Twój dzień.</h2>
+      <div class="grid-3" style="margin-top:22px">
+        <div class="card">
+          <h3 style="margin:0 0 10px;font-size:22px">Q4 2025 — MVP</h3>
+          <ul class="list">
+            <li>Głos → zadania (opis, priorytet, ETA, termin).</li>
+            <li>„Co teraz” na bazie priorytetów i kalendarza.</li>
+            <li>Podsumowania dnia (co działa / co poprawić).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 10px;font-size:22px">Q1 2026 — Adaptacja</h3>
+          <ul class="list">
+            <li>Profil energii (pory dnia, tempo).</li>
+            <li>Automatyczne przetasowanie planu przy zmianach.</li>
+            <li>Skróty głosowe „hands-free”.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 10px;font-size:22px">Q2–Q3 2026 — Skala</h3>
+          <ul class="list">
+            <li>Integracje: Google/Microsoft Calendar, iOS/Android.</li>
+            <li>Rekomendacje oparte o podobnych użytkowników (privacy-first).</li>
+            <li>API dla partnerów (coaching, productivity, well-being).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7: Model biznesowy -->
+  <section class="slide">
+    <div class="container cols">
+      <div>
+        <div class="eyebrow">Model biznesowy</div>
+        <h2 class="title">Subskrypcja asystenta produktywności.</h2>
+        <ul class="list">
+          <li><b>Freemium</b> — limity zadań/głosu.</li>
+          <li><b>Pro (ok. 19–29 € / m-c)</b> — pełne planowanie, „co teraz”, adaptacja energii, podsumowania, integracje.</li>
+          <li><b>Teams</b> — małe zespoły: współdzielone okna fokusowe, handoff zadań.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Wartość jednostkowa</div>
+        <div class="sep"></div>
+        <ul class="list">
+          <li>≥ 30–60 min dziennie odzyskanej produktywności.</li>
+          <li>Mniejszy koszt psychiczny planowania i decyzji.</li>
+          <li>Codzienny „co teraz” → nawyk, retencja, LTV.</li>
+        </ul>
+        <div class="space"></div>
+        <span class="pill">Go-to-market: iOS/Android beta • community ADHD • twórcy produktywności</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
+
