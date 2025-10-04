@@ -23,7 +23,7 @@ const mockTasks: Task[] = [
   { name: 'Finalize Q4 report', date: '2025-10-15T23:59:59.000Z', date_type: 'deadline', priority: 1, estimated_time: 180, status: 'planned' },
   { name: 'Submit project proposal', date: '2025-10-10T17:00:00.000Z', date_type: 'deadline', priority: 2, estimated_time: 120, status: 'planned' },
   { name: 'Buy birthday gift for Alex', date: '2025-10-08T23:59:59.000Z', date_type: 'deadline', priority: 3, estimated_time: 45, status: 'planned' },
-  { name: 'Research new project management tools', date: '2025-10-20T23:59:59.000Z', date_type: 'deadline', priority: 3, estimated_time: 90, status: 'planned' },
+  { name: 'Research new project management tools with a very long name to test overflow', date: '2025-10-20T23:59:59.000Z', date_type: 'deadline', priority: 3, estimated_time: 90, status: 'planned' },
 
   // Dated Tasks for 2025-10-05
   { name: 'Team Standup Meeting', date: '2025-10-05T09:00:00.000Z', date_type: 'date', priority: 1, estimated_time: 30, status: 'planned' },
@@ -207,6 +207,8 @@ const styles = StyleSheet.create({
   taskName: {
     fontSize: 18,
     fontWeight: '500',
+    flex: 1,
+    marginRight: 8,
   },
   taskDetailsContainer: {
     marginTop: 16,
