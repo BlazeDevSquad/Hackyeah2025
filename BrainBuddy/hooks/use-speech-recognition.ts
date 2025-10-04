@@ -7,10 +7,12 @@ import { Animated, Easing } from 'react-native';
 
 export const useSpeechRecognition = () => {
   const [isRecording, setIsRecording] = useState(false);
+  // Holds the confirmed, final parts of the transcript
   const [transcript, setTranscript] = useState('');
+  // Holds the live, in-progress part of the transcript
   const [partialTranscript, setPartialTranscript] = useState('');
 
-  // Use a ref to store the latest transcript immediately, avoiding state update delays.
+  // Use a ref to store the latest full transcript to avoid state update delays on stop.
   const transcriptRef = useRef('');
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -55,21 +57,27 @@ export const useSpeechRecognition = () => {
     return () => clearTimeout(timer);
   }, [isRecording]);
 
+  // --- CORE FIX IS HERE ---
   useSpeechRecognitionEvent('result', (e) => {
     if (!e.results?.length) return;
 
-    // The full transcript from the event, including all parts.
-    const fullResultTranscript = e.results.map((r) => r.transcript).join(' ');
+    // Correctly build the transcript by combining all final segments
+    const finalTranscript = e.results
+      .filter(result => result.isFinal)
+      .map(result => result.transcript)
+      .join(' ');
+      
+    // Find the latest non-final segment for the partial transcript
+    const partialTranscript = e.results
+      .filter(result => !result.isFinal)
+      .map(result => result.transcript)
+      .join(' ');
 
-    if (e.isFinal) {
-      // When a final result is received, update the ref and state.
-      transcriptRef.current = fullResultTranscript;
-      setTranscript(fullResultTranscript);
-      setPartialTranscript('');
-    } else {
-      // Otherwise, it's a partial result.
-      setPartialTranscript(fullResultTranscript);
-    }
+    setTranscript(finalTranscript);
+    setPartialTranscript(partialTranscript);
+
+    // Update the ref with the combined result for immediate access on stop
+    transcriptRef.current = (finalTranscript + ' ' + partialTranscript).trim();
   });
 
   useSpeechRecognitionEvent('end', () => {
@@ -102,7 +110,7 @@ export const useSpeechRecognition = () => {
       await STT.start({
         lang: 'en-US',
         interimResults: true,
-        continuous: true,
+        continuous: true, // Keep true to allow long recordings controlled by the user
       });
 
       setIsRecording(true);
@@ -122,6 +130,7 @@ export const useSpeechRecognition = () => {
       console.error('[STT] Error stopping speech recognition:', error);
     }
     // Return the final transcript from the ref to avoid race conditions.
+    console.log(`[DEBUG] Got finalTranscript: ${transcriptRef.current}`);
     return transcriptRef.current;
   };
   
