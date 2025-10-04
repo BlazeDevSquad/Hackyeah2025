@@ -3,140 +3,130 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BrainBuddy — Pitch Deck</title>
+<title>BrainBuddy — Pitch Deck (Print-Proof)</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
   :root{
-    --ink:#0a0b10;
-    --muted:#3b4054;
-    --stroke:#e6e8f1;
-    --card:#ffffff;
-    --maxw:1280px;
-
-    /* Akcenty */
-    --a:#cf56ff;       /* magenta */
-    --b:#6bd3ff;       /* cyan */
-    --c:#8b5cf6;       /* violet */
-
-    /* Tła slajdów (subtelne) */
-    --bg1: radial-gradient(1200px 720px at 75% -10%, rgba(207,86,255,.12), transparent 60%),
-           radial-gradient(900px 600px at -10% 80%, rgba(107,211,255,.10), transparent 60%),
-           linear-gradient(180deg,#fff,#fbfcff 70%);
-    --bg2: radial-gradient(1000px 600px at 10% 0%, rgba(139,92,246,.12), transparent 55%),
-           radial-gradient(800px 520px at 110% 90%, rgba(107,211,255,.08), transparent 60%),
-           linear-gradient(180deg,#fff,#fdfdff 70%);
+    --ink:#101225;
+    --muted:#56607a;
+    --stroke:#e6eaf3;
+    --a:#b33bff;      /* magenta */
+    --b:#24b2ff;      /* cyan  */
   }
 
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-    color:var(--ink);
-    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-  }
+  /* ====== EKRAN (te same wymiary co druk) ====== */
+  html,body{height:100%; margin:0; background:#f3f5f9;}
+  body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial; color:var(--ink);}
 
-  /* Slajdy */
-  main{scroll-snap-type:y mandatory}
+  /* A4 landscape: 297mm × 210mm — identycznie w ekran/druk */
+  .deck{display:grid; gap:12mm; padding:12mm; justify-content:center;}
   .slide{
-    min-height:100svh; display:flex; align-items:center;
-    padding: clamp(72px, 9vh, 120px) 28px;
-    scroll-snap-align:start;
-    background: var(--bg1);
+    width:297mm; height:210mm;                /* <— KLUCZ: mm, nie px  */
+    background:#fff; border:1px solid #dfe3ee; border-radius:6mm;
+    box-shadow:0 2mm 6mm rgba(16,18,37,.08);
+    padding:18mm; box-sizing:border-box; overflow:hidden;
+    print-color-adjust: exact; -webkit-print-color-adjust: exact;
+    display:flex; align-items:flex-start;
   }
-  .slide:nth-of-type(even){ background: var(--bg2); }
 
-  .container{width:100%; max-width:var(--maxw); margin:0 auto; display:grid; gap:40px}
-  .cols{display:grid; grid-template-columns:1.15fr .95fr; gap:56px}
-  @media (max-width:1100px){ .cols{grid-template-columns:1fr; gap:28px} }
-
-  /* Typografia */
-  .eyebrow{
-    letter-spacing:.18em; text-transform:uppercase; font-weight:700;
-    font-size:13px; color:#6b7188;
-  }
-  h1,h2{margin:0}
-  .huge{font-size: clamp(56px, 9.5vw, 118px); line-height:.94; letter-spacing:-.02em; font-weight:800}
-  .title{font-size: clamp(40px, 5.5vw, 68px); line-height:1.03; letter-spacing:-.012em; font-weight:800}
-  .lead{font-size: clamp(20px, 2.4vw, 24px); color:#1f2432; line-height:1.5}
-  p, li{font-size: clamp(17px, 1.9vw, 20px)}
+  /* Typografia (czytelna, bez efektów) */
+  h1,h2,h3,p{margin:0 0 5mm 0;}
+  .eyebrow{font:800 3.2mm/1 Inter; letter-spacing:.18em; text-transform:uppercase; color:#6b7591;}
+  .huge{font-weight:900; font-size:22mm; line-height:.95; letter-spacing:-.02em;}
+  .title{font-weight:900; font-size:12mm; line-height:1.05; letter-spacing:-.01em;}
+  .lead{font-size:5mm; line-height:1.55; max-width:160mm; color:#1f263b;}
+  p, li{font-size:4.2mm; line-height:1.55}
   .muted{color:var(--muted)}
+  .gtext{background:linear-gradient(180deg,var(--a),var(--b)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .accent{width:18mm; height:1mm; background:linear-gradient(90deg,var(--a),var(--b)); border-radius:1mm; margin:2mm 0 0}
 
-  /* Gradientowe akcenty */
-  .gtext{background: linear-gradient(180deg, var(--a), var(--b)); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .glow-border{position:relative}
-  .glow-border::before{
-    content:""; position:absolute; inset:-1px; border-radius:inherit;
-    background:linear-gradient(90deg,var(--a),var(--b));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude;
-    padding:1px; border-radius:inherit; pointer-events:none; opacity:.9;
-  }
-  .sep{height:1px; width:100%; background:linear-gradient(90deg, #fff, #e9e9f4 30%, #e9e9f4 70%, #fff)}
+  /* Układ kolumn */
+  .cols{display:grid; grid-template-columns:1.15fr .85fr; gap:12mm; width:100%;}
+  .only{max-width:220mm}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:6mm;}
 
-  /* Karty / listy */
+  /* Karty — bez fioletowego fill, zawsze białe i czytelne */
   .card{
-    border-radius:24px; background:var(--card); padding:26px;
-    border:1px solid rgba(230,232,241,.85);
-    box-shadow: 0 10px 30px rgba(14,20,33,.06);
+    background:#fff; border:1px solid var(--stroke); border-radius:5mm; padding:8mm;
+    box-shadow:0 3mm 10mm rgba(16,18,37,.06);
+    break-inside: avoid;
   }
-  .list{display:grid; gap:14px; margin:10px 0; padding:0; list-style:none}
-  .list li{line-height:1.6; position:relative; padding-left:28px}
+
+  /* Lista z czytelnym punktorom */
+  .list{list-style:none; padding:0; margin:0; display:grid; gap:3.2mm}
+  .list li{position:relative; padding-left:8mm; color:#11152a; break-inside:avoid;}
   .list li::before{
-    content:""; position:absolute; left:0; top:.6em; width:14px; height:14px; border-radius:50%;
+    content:""; position:absolute; left:0; top:0.5em; width:4.6mm; height:4.6mm; border-radius:50%;
     background:linear-gradient(135deg,var(--a),var(--b));
-    box-shadow:0 0 0 3px #ffffffaa, 0 4px 10px rgba(147,112,219,.25);
+    box-shadow:0 0 0 1mm #ffffffc5, 0 1.4mm 4mm rgba(93,80,220,.22);
   }
 
-  /* Obraz/placeholder */
+  /* Miejsce na ilustrację (opcjonalnie) */
   .visual{
-    aspect-ratio: 4/3; border-radius:32px; overflow:hidden;
-    background:
-      radial-gradient(140% 100% at 110% 10%, #e8f8ff 0%, transparent 45%),
-      radial-gradient(120% 90% at -10% 100%, #fbe8ff 0%, transparent 50%),
-      linear-gradient(180deg,#f6f8ff,#fff);
-    border:1px solid rgba(230,232,241,.9);
-    box-shadow:
-      0 10px 30px rgba(14,20,33,.06),
-      0 0 0 6px rgba(207,86,255,.06),
-      0 0 0 12px rgba(107,211,255,.05);
-    display:grid; place-items:center; padding:28px;
+    aspect-ratio:4/3; border:1px solid var(--stroke); border-radius:6mm; overflow:hidden;
+    background:linear-gradient(180deg,#f7f9ff,#fff);
+    display:grid; place-items:center; padding:6mm; box-shadow:0 3mm 10mm rgba(16,18,37,.06);
   }
-  .visual img{max-width:100%; height:auto; display:block; filter:saturate(1.05) contrast(1.02)}
+  .visual img{max-width:100%; height:auto; display:block}
 
-  .pill{display:inline-block; padding:10px 16px; border-radius:999px;
-        background:linear-gradient(90deg,#fff, #fafaff);
-        border:1px solid rgba(230,232,241,.9); color:#262b39; font-weight:700}
+  .pill{display:inline-block; padding:3.2mm 5mm; border-radius:999px; border:1px solid var(--stroke); background:#fff; font-weight:800; font-size:4mm}
 
-  .space{height:18px}
+  /* ====== DRUK (PDF) ====== */
+  @media print {
+    @page{
+      size: A4 landscape;    /* <— standard A4 w poziomie */
+      margin: 0;
+    }
+    html,body{background:#fff;}
+    .deck{gap:0; padding:0;}
+    .slide{
+      width:297mm; height:210mm; border:none; border-radius:0; box-shadow:none;
+      page-break-before: always; page-break-after: always; break-after: page; break-before: page;
+      overflow:hidden; contain: layout paint; widows:1; orphans:1;
+    }
+    /* Bez łamań w środku bloków */
+    .card, .cols, .grid3, .list, .list li { break-inside: avoid; page-break-inside: avoid; }
+    /* Kolory pewne */
+    *{print-color-adjust: exact; -webkit-print-color-adjust: exact;}
+  }
+
+  /* ====== (opcjonalnie) Wersja 16:9 zamiast A4 ======
+  @media print {
+    @page{ size: 1920px 1080px; margin:0; }
+  }
+  .slide{ width:1920px; height:1080px; }
+  ==================================================== */
 </style>
 </head>
 <body>
 
-<main>
+<div class="deck">
+
   <!-- SLIDE 1 -->
   <section class="slide">
-    <div class="container cols">
-      <div>
-        <div class="huge gtext">Mów.<br/>Planuj.<br/>Biohackuj.</div>
-        <div class="space"></div>
+    <div class="cols">
+      <div class="only">
+        <div class="huge"><span class="gtext">Mów.</span><br/>Planuj.<br/>Biohackuj.</div>
+        <div class="accent"></div>
         <h2 class="title">Twój <span class="gtext">AI-mózg</span>, który trzyma życie w ryzach.</h2>
         <p class="lead">Powiedz, co masz do zrobienia. BrainBuddy słucha, porządkuje, ustala priorytety i układa plan, który pasuje do prawdziwego życia. Kiedy pytasz „Co teraz?”, zawsze dostajesz właściwy następny krok.</p>
-        <p class="muted" style="font-weight:600">🎙️ Głos • 🗓️ Kalendarz • ⚡ Dynamiczne dostosowanie • 🧠 Uczenie nawyków</p>
+        <p class="muted" style="font-weight:700">🎙️ Głos • 🗓️ Kalendarz • ⚡ Dynamiczne dostosowanie • 🧠 Uczenie nawyków</p>
       </div>
-      <div class="visual glow-border">
-        <!-- Podmień na swój obraz -->
-        <img alt="Astronauta z mózgiem-AI w wizjerze" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' width='1200' height='900'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop stop-color='%23cf56ff'/><stop offset='1' stop-color='%236bd3ff'/></linearGradient></defs><rect width='100%' height='100%' fill='white'/><circle cx='600' cy='450' r='260' fill='url(%23g)' opacity='0.22'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Inter' font-size='46' fill='%238a92a7'>Wstaw tutaj grafikę hero</text></svg>"/>
+      <div class="visual">
+        <!-- Podmień na swoją grafikę -->
+        <img alt="Hero" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' width='1200' height='900'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop stop-color='%23b33bff'/><stop offset='1' stop-color='%2324b2ff'/></linearGradient></defs><rect width='100%' height='100%' fill='white'/><circle cx='600' cy='450' r='260' fill='url(%23g)' opacity='0.22'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter' font-size='46' fill='%238a92a7'>Wstaw obraz</text></svg>"/>
       </div>
     </div>
   </section>
 
-  <!-- SLIDE 2: Problem -->
+  <!-- SLIDE 2 -->
   <section class="slide">
-    <div class="container cols">
-      <div>
+    <div class="cols">
+      <div class="only">
         <div class="eyebrow">Problem</div>
-        <h2 class="title">Funkcje wykonawcze są przeciążone.</h2>
+        <h2 class="title">Funkcje wykonawcze są <span class="gtext">przeciążone</span>.</h2>
         <p class="lead">Osoby z ADHD i ludzie bardzo zapracowani zmagają się z planowaniem, priorytetyzacją i przełączaniem kontekstu. Idealne listy „to-do” nie wytrzymują zderzenia z rzeczywistością.</p>
         <ul class="list">
           <li><b>Brak jasnego „co teraz”.</b> Decyzje ad-hoc spalają uwagę.</li>
@@ -144,10 +134,9 @@
           <li><b>Plan ≠ energia.</b> Narzędzia nie uczą się Twojego tempa i pór dnia.</li>
         </ul>
       </div>
-      <div class="card glow-border">
+      <div class="card">
         <div class="eyebrow">Dlaczego obecne narzędzia nie wystarczą?</div>
-        <div class="sep"></div>
-        <ul class="list">
+        <ul class="list" style="margin-top:3mm">
           <li>Listy zadań nie podpowiadają <i>kontekstowego</i> następnego kroku.</li>
           <li>Brak automatycznej rekonfiguracji dnia przy zmianach.</li>
           <li>Brak modelu Twojej energii i nawyków pracy.</li>
@@ -156,10 +145,10 @@
     </div>
   </section>
 
-  <!-- SLIDE 3: Rozwiązanie -->
+  <!-- SLIDE 3 -->
   <section class="slide">
-    <div class="container cols">
-      <div>
+    <div class="cols">
+      <div class="only">
         <div class="eyebrow">Rozwiązanie</div>
         <h2 class="title">BrainBuddy — głosowy asystent, który <span class="gtext">planuje za Ciebie</span>.</h2>
         <ul class="list">
@@ -169,41 +158,30 @@
           <li>🧠 <b>Uczenie nawyków</b> — dopasowanie do realnej energii i tempa.</li>
         </ul>
       </div>
-      <div class="card glow-border">
+      <div class="card">
         <div class="eyebrow">One-liner</div>
-        <div class="sep"></div>
-        <p class="lead" style="font-weight:800">„Powiedz, co masz do zrobienia — BrainBuddy ułoży plan i powie Ci, co zrobić teraz.”</p>
+        <p class="lead" style="font-weight:900">„Powiedz, co masz do zrobienia — BrainBuddy ułoży plan i powie Ci, co zrobić teraz.”</p>
       </div>
     </div>
   </section>
 
-  <!-- SLIDE 4: Opinie -->
+  <!-- SLIDE 4 -->
   <section class="slide">
-    <div class="container">
+    <div class="only">
       <div class="eyebrow">Walidacja</div>
       <h2 class="title"><span class="gtext">„Wreszcie nie przepisuję zadań dzień w dzień.”</span></h2>
-      <div class="sep" style="margin-top:16px"></div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:22px">
-        <div class="card">
-          <blockquote>„Największy zysk? Pytam <i>co teraz</i> i zaczynam bez 20 minut kręcenia się.”</blockquote>
-          <div class="person">Agnieszka — PM (ADHD), Warszawa</div>
-        </div>
-        <div class="card">
-          <blockquote>„Plan sam się układa, gdy wpadnie call. Bez poczucia winy, z nowym, jasnym planem.”</blockquote>
-          <div class="person">Michał — Software Engineer, Kraków</div>
-        </div>
-        <div class="card">
-          <blockquote>„Mówienie do telefonu jest naturalne. System rozumie, że po 15:00 mam mniej energii.”</blockquote>
-          <div class="person">Ola — Studentka, Gdańsk</div>
-        </div>
+      <div class="grid3" style="margin-top:6mm">
+        <div class="card"><blockquote style="margin:0 0 3mm">„Największy zysk? Pytam <i>co teraz</i> i zaczynam bez 20 minut kręcenia się.”</blockquote><div class="muted" style="font-weight:700">Agnieszka — PM (ADHD), Warszawa</div></div>
+        <div class="card"><blockquote style="margin:0 0 3mm">„Plan sam się układa, gdy wpadnie call. Bez poczucia winy, z nowym, jasnym planem.”</blockquote><div class="muted" style="font-weight:700">Michał — Software Engineer, Kraków</div></div>
+        <div class="card"><blockquote style="margin:0 0 3mm">„Mówienie do telefonu jest naturalne. System rozumie, że po 15:00 mam mniej energii.”</blockquote><div class="muted" style="font-weight:700">Ola — Studentka, Gdańsk</div></div>
       </div>
     </div>
   </section>
 
-  <!-- SLIDE 5: Profil klienta -->
+  <!-- SLIDE 5 -->
   <section class="slide">
-    <div class="container cols">
-      <div>
+    <div class="cols">
+      <div class="only">
         <div class="eyebrow">Profil klienta</div>
         <h2 class="title">Kto najbardziej skorzysta?</h2>
         <ul class="list">
@@ -212,10 +190,9 @@
           <li>🎓 <b>Studenci / twórcy</b> — jasny start i rytm pracy.</li>
         </ul>
       </div>
-      <div class="card glow-border">
+      <div class="card">
         <div class="eyebrow">Jobs-to-be-done</div>
-        <div class="sep"></div>
-        <ul class="list">
+        <ul class="list" style="margin-top:3mm">
           <li>Zmniejszyć „czas rozruchu” i liczbę decyzji ad-hoc.</li>
           <li>Utrzymać progres mimo zakłóceń (przetasowania planu).</li>
           <li>Dopasować plan do energii, nie tylko do kalendarza.</li>
@@ -224,15 +201,14 @@
     </div>
   </section>
 
-  <!-- SLIDE 6: Roadmap -->
+  <!-- SLIDE 6 -->
   <section class="slide">
-    <div class="container">
+    <div class="only">
       <div class="eyebrow">Roadmap</div>
       <h2 class="title">Od MVP do asystenta, który „czuje” Twój dzień.</h2>
-      <div class="sep" style="margin-top:16px"></div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:22px">
+      <div class="grid3" style="margin-top:6mm">
         <div class="card">
-          <h3 style="margin:0 0 10px;font-size:22px" class="gtext">Q4 2025 — MVP</h3>
+          <h3 style="margin:0 0 3mm; font-size:6mm" class="gtext">Q4 2025 — MVP</h3>
           <ul class="list">
             <li>Głos → zadania (opis, priorytet, ETA, termin).</li>
             <li>„Co teraz” na bazie priorytetów i kalendarza.</li>
@@ -240,7 +216,7 @@
           </ul>
         </div>
         <div class="card">
-          <h3 style="margin:0 0 10px;font-size:22px" class="gtext">Q1 2026 — Adaptacja</h3>
+          <h3 style="margin:0 0 3mm; font-size:6mm" class="gtext">Q1 2026 — Adaptacja</h3>
           <ul class="list">
             <li>Profil energii (pory dnia, tempo).</li>
             <li>Automatyczne przetasowanie planu przy zmianach.</li>
@@ -248,7 +224,7 @@
           </ul>
         </div>
         <div class="card">
-          <h3 style="margin:0 0 10px;font-size:22px" class="gtext">Q2–Q3 2026 — Skala</h3>
+          <h3 style="margin:0 0 3mm; font-size:6mm" class="gtext">Q2–Q3 2026 — Skala</h3>
           <ul class="list">
             <li>Integracje: Google/Microsoft Calendar, iOS/Android.</li>
             <li>Rekomendacje (privacy-first) oparte o podobnych użytkowników.</li>
@@ -259,10 +235,10 @@
     </div>
   </section>
 
-  <!-- SLIDE 7: Model biznesowy -->
+  <!-- SLIDE 7 -->
   <section class="slide">
-    <div class="container cols">
-      <div>
+    <div class="cols">
+      <div class="only">
         <div class="eyebrow">Model biznesowy</div>
         <h2 class="title">Subskrypcja asystenta produktywności.</h2>
         <ul class="list">
@@ -271,20 +247,19 @@
           <li><b>Teams</b> — małe zespoły: współdzielone okna fokusowe, handoff zadań.</li>
         </ul>
       </div>
-      <div class="card glow-border">
+      <div class="card">
         <div class="eyebrow">Wartość jednostkowa</div>
-        <div class="sep"></div>
-        <ul class="list">
+        <ul class="list" style="margin-top:3mm">
           <li>≥ 30–60 min dziennie odzyskanej produktywności.</li>
           <li>Mniejszy koszt psychiczny planowania i decyzji.</li>
           <li>Codzienny „co teraz” → nawyk, retencja, LTV.</li>
         </ul>
-        <div class="space"></div>
-        <span class="pill">Go-to-market: iOS/Android beta • community ADHD • twórcy produktywności</span>
+        <div style="margin-top:5mm"><span class="pill">Go-to-market: iOS/Android beta • ADHD community • twórcy produktywności</span></div>
       </div>
     </div>
   </section>
-</main>
+
+</div>
 
 </body>
 </html>
