@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GeminiTask, Task } from "@/constants/types";
+import { GeminiTask, OperationPick, Task } from "@/constants/types";
 
 const GEMINI_API_KEY = "AIzaSyAnpya1oO7QtSp5OhccqzhNKLRJu0pvDYs";
 const GEMINI_URL =   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
@@ -21,6 +21,96 @@ export async function getStringResponse(prompt: string): Promise<string> {
         console.error("Error fetching string response from Gemini:", error);
         return "";
     }
+}
+
+export async function getOperationType(text: string): Promise<OperationPick | null> {
+    const prompt = `
+You are a classification model that determines what kind of operation the user is requesting.
+
+There are two possible operations:
+
+"update" → The user is adding, modifying, or managing tasks.
+
+Examples:
+
+“Add a new task to write my report.”
+
+“Update my gym task to tomorrow.”
+
+“I finished writing two pages.”
+
+“Change deadline of my project.”
+
+"select" → The user is asking what task to do next or requesting a suggestion based on available time or priority.
+
+Examples:
+
+“I have 30 minutes free, what should I do?”
+
+“Give me something productive to do now.”
+
+“What task should I focus on next?”
+
+Your task:
+
+Based only on the meaning of the user's message, choose which operation fits best.
+Do not explain or add extra text — just return a JSON object in this exact format:
+{
+  "operation": "select"
+}
+or 
+{
+  "operation": "update"
+}
+Additional rules:
+
+If the user mentions adding, changing, completing, or planning a task → "update"
+
+If the user asks for a recommendation or what to do now → "select"
+
+Never include extra text or explanations — return only valid JSON.
+
+User input: "${text}"
+`;
+
+    const contents = [{ role: "user", parts: [{ text: prompt }] }];
+    let retries = 3;
+
+    while (retries > 0) {
+        try {
+            const { data } = await axios.post(
+                GEMINI_URL,
+                { contents },
+                {
+                    params: { key: GEMINI_API_KEY },
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+
+            const rawResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!rawResponse) {
+                console.warn(`Attempt ${4 - retries}: Gemini (operation pick) returned an empty response. Retrying.`);
+                retries--;
+                continue;
+            }
+
+            const cleanedResponse = rawResponse.replace(/```json|```/g, '').trim();
+            const parsedJson = JSON.parse(cleanedResponse);
+
+            if (parsedJson.operation && (parsedJson.operation === 'select' || parsedJson.operation === 'update')) {
+                return parsedJson as OperationPick;
+            } else {
+                console.warn(`Attempt ${4 - retries}: Validation failed for operation pick response: ${cleanedResponse}. Retrying.`);
+                retries--;
+            }
+        } catch (error) {
+            console.error(`Attempt ${4 - retries}: Error parsing or fetching Gemini operation pick response.`, error);
+            retries--;
+        }
+    }
+    
+    console.error("Failed to get a valid operation pick from Gemini after 3 attempts.");
+    return null;
 }
 
 export async function getJsonResponse(prompt: string): Promise<GeminiTask[] | null> {
@@ -255,9 +345,6 @@ export const processTaskOperations = (
         }
         break;
       }
-
-      case 'select':
-        throw new Error("The 'select' operation is not a supported task modification.");
 
       default:
         break;

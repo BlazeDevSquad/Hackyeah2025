@@ -10,7 +10,7 @@ import {RecordingButton} from './recording-button';
 import {ResultView} from './result-view';
 import {speakText} from "@/utils/tts";
 import { useTasks } from '@/providers/tasks';
-import { parseTaskOperation, processTaskOperations } from '@/utils/gemini';
+import { getOperationType, parseTaskOperation, processTaskOperations, selectTask } from '@/utils/gemini';
 
 export default function BrainBuddy() {
   const [showResult, setShowResult] = useState(false);
@@ -38,15 +38,28 @@ export default function BrainBuddy() {
       if (finalTranscript) {
         setIsLoading(true);
         try {
-          const geminiTasks = await parseTaskOperation(finalTranscript, tasks);
-          if (geminiTasks) {
-            processTaskOperations(geminiTasks, tasks, addTask, modifyTask);
-            setGeminiResponse('Your request was processed successfully!');
+          const operationType = await getOperationType(finalTranscript);
+
+          if (operationType?.operation === 'update') {
+            const geminiTasks = await parseTaskOperation(finalTranscript, tasks);
+            if (geminiTasks) {
+              processTaskOperations(geminiTasks, tasks, addTask, modifyTask);
+              setGeminiResponse('Your request was processed successfully!');
+            } else {
+              setGeminiResponse('Sorry, I could not understand the task. Please try again.');
+            }
+          } else if (operationType?.operation === 'select') {
+            const suggestion = await selectTask(finalTranscript, tasks);
+            if (suggestion) {
+              setGeminiResponse(suggestion);
+            } else {
+              setGeminiResponse("I couldn't come up with a suggestion right now. Please try again.");
+            }
           } else {
-            setGeminiResponse('Sorry, I could not understand the task. Please try again.');
+            setGeminiResponse("I'm not sure what you're asking. Could you please rephrase?");
           }
         } catch (error) {
-          console.error('Error sending to Gemini API:', error);
+          console.error('Error processing request:', error);
           setGeminiResponse('Sorry, an error occurred during the request.');
         } finally {
           setIsLoading(false);

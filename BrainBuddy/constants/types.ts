@@ -12,7 +12,7 @@ export interface Task {
 }
 
 export interface GeminiTask {
-  operation: "add" | "modify" | "select";
+  operation: "add" | "modify";
   name: string;
   date?: string; // Using string for ISO 8601 datetime format, both deadline and date type can use this field, in case of deadline date means end of deadline
   date_type: "deadline" | "date";
