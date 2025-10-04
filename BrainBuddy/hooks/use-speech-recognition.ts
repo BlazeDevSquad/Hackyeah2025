@@ -1,6 +1,6 @@
 import {
-    ExpoSpeechRecognitionModule as STT,
-    useSpeechRecognitionEvent,
+  ExpoSpeechRecognitionModule as STT,
+  useSpeechRecognitionEvent,
 } from 'expo-speech-recognition';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing } from 'react-native';
@@ -45,6 +45,7 @@ export const useSpeechRecognition = () => {
     let timer: NodeJS.Timeout;
     if (isRecording) {
       timer = setTimeout(() => {
+        console.log('[STT_DEBUG] 60-second recording limit reached. Stopping automatically.');
         stopRecording();
       }, 60000); // 60 seconds
     }
@@ -58,61 +59,75 @@ export const useSpeechRecognition = () => {
     const currentTranscript = result.transcript || '';
 
     if (e.isFinal) {
+      console.log(`[STT_DEBUG] Final result received: "${currentTranscript}"`);
       setTranscript(prev => prev ? `${prev} ${currentTranscript}` : currentTranscript);
       setPartialTranscript('');
     } else {
+      console.log(`[STT_DEBUG] Partial result received: "${currentTranscript}"`);
       setPartialTranscript(currentTranscript);
     }
   });
 
   useSpeechRecognitionEvent('end', () => {
+    console.log('[STT_DEBUG] Speech recognition "end" event fired.');
     if (isRecording) {
-      stopRecording();
+      // Ensure recording state is synced if the service ends unexpectedly
+      setIsRecording(false);
     }
   });
   
   useSpeechRecognitionEvent('error', (e) => {
-    console.error('Speech recognition error:', e);
+    console.error('[STT_DEBUG] Speech recognition "error" event fired:', e);
     setIsRecording(false);
     setPartialTranscript('');
     Animated.timing(scaleAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
   });
 
   const startRecording = async () => {
+    console.log('[STT_DEBUG] Attempting to start recording...');
     try {
+      console.log('[STT_DEBUG] Requesting speech recognition permissions...');
       const permissions = await STT.requestPermissionsAsync();
       if (!permissions.granted) {
-        console.warn('Speech recognition permission not granted');
+        console.warn('[STT_DEBUG] Speech recognition permission not granted.');
         return;
       }
+      console.log('[STT_DEBUG] Permissions granted.');
       
       Animated.timing(scaleAnim, { toValue: 0.9, duration: 200, useNativeDriver: true }).start();
+      console.log('[STT_DEBUG] Resetting previous transcripts.');
       setTranscript('');
       setPartialTranscript('');
       
+      console.log('[STT_DEBUG] Calling STT.start()...');
       await STT.start({
-        lang: 'pl-PL',
+        lang: 'en-US',
         interimResults: true,
         continuous: true,
       });
+
+      console.log('[STT_DEBUG] STT started successfully. Setting isRecording to true.');
       setIsRecording(true);
     } catch (error) {
-      console.error('Failed to start speech recognition:', error);
+      console.error('[STT_DEBUG] Failed to start speech recognition:', error);
       Animated.timing(scaleAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     }
   };
 
   const stopRecording = async () => {
+    console.log('[STT_DEBUG] Attempting to stop recording...');
     Animated.timing(scaleAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     setIsRecording(false);
     try {
       await STT.stop();
-    } catch (error) {
-      console.error('Error stopping speech recognition:', error);
+      console.log('[STT_DEBUG] STT stopped successfully.');
+    } catch (error)  {    
+      console.error('[STT_DEBUG] Error stopping speech recognition:', error);
     }
   };
   
   const reset = () => {
+    console.log('[STT_DEBUG] Reset function called. Clearing transcripts.');
     setTranscript('');
     setPartialTranscript('');
   };

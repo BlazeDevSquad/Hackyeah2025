@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { styles } from '../constants/styles';
+import useGemini from '../hooks/use-gemini';
 import { useSpeechRecognition } from '../hooks/use-speech-recognition';
 import { useThemedStyles } from '../hooks/use-themed-styles';
 import { Header } from './header';
 import { Instructions } from './instructions';
-import { PreviewBox } from './preview-box';
+import { LoadingView } from './loading-view';
 import { RecordingButton } from './recording-button';
 import { ResultView } from './result-view';
 
 export default function BrainBuddy() {
   const [showResult, setShowResult] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [geminiResponse, setGeminiResponse] = useState('');
   const { colors } = useThemedStyles();
+  const { sendToGemini } = useGemini();
+
   const {
     isRecording,
     transcript,
-    partialTranscript,
     pulseAnim,
     scaleAnim,
     startRecording,
@@ -23,23 +27,57 @@ export default function BrainBuddy() {
     reset,
   } = useSpeechRecognition();
 
-  const handlePress = () => {
+  const handlePress = async () => {
     if (isRecording) {
-      stopRecording();
-      // Wait for the final transcript to be processed
-      setTimeout(() => setShowResult(true), 500);
+      console.log('[DEBUG] Stopping recording...');
+      await stopRecording();
+      
+      // Use a short timeout to ensure the final transcript is captured
+      setTimeout(async () => {
+        console.log(`[DEBUG] Final Transcript captured: "${transcript}"`);
+        
+        if (transcript) {
+          console.log('[DEBUG] Setting loading state to: true');
+          setIsLoading(true);
+          try {
+            console.log(`[DEBUG] Sending to Gemini API: "${transcript}"`);
+            const response = await sendToGemini(transcript);
+            console.log(`[DEBUG] Received from Gemini API: "${response}"`);
+            setGeminiResponse(response);
+          } catch (error) {
+            console.error('[DEBUG] Error sending to Gemini API:', error);
+            setGeminiResponse('Sorry, an error occurred during the request.');
+          } finally {
+            console.log('[DEBUG] Setting loading state to: false');
+            setIsLoading(false);
+            console.log('[DEBUG] Setting showResult state to: true');
+            setShowResult(true);
+          }
+        } else {
+            console.warn('[DEBUG] No speech was detected.');
+            setGeminiResponse('No speech was detected. Please try again.');
+            setShowResult(true);
+        }
+      }, 500);
     } else {
+      console.log('[DEBUG] Starting recording...');
       startRecording();
     }
   };
 
   const handleReset = () => {
+    console.log('[DEBUG] Resetting state for new recording.');
     reset();
+    setGeminiResponse('');
     setShowResult(false);
   };
-  
+
+  if (isLoading) {
+    return <LoadingView />;
+  }
+
   if (showResult) {
-    return <ResultView transcript={transcript} onReset={handleReset} />;
+    return <ResultView geminiResponse={geminiResponse} onReset={handleReset} />;
   }
 
   return (
@@ -52,10 +90,6 @@ export default function BrainBuddy() {
           onPress={handlePress}
           pulseAnim={pulseAnim}
           scaleAnim={scaleAnim}
-        />
-        <PreviewBox
-          transcript={transcript}
-          partialTranscript={partialTranscript}
         />
       </View>
 
