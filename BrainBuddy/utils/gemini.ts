@@ -71,6 +71,9 @@ export async function getJsonResponse(prompt: string): Promise<GeminiTask[] | nu
 }
 
 export async function parseTaskOperation(text: string, tasks: Task[]): Promise<GeminiTask[] | null> {
+    const today = new Date();
+    const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
+    const currentDate = today.toISOString().split('T')[0];
     const mockPrompt = `
 You are a task extraction assistant.
 Your job is to read the user's input about tasks and generate list of JSON objects following the Task interface.
@@ -79,7 +82,7 @@ You will be provided with:
 
 A list of existing tasks (with their fields filled).
 
-The current date.
+The current date: Today is ${dayOfWeek}, ${currentDate}.
 
 The user's input text, wjhich can contain more than one task.
 
