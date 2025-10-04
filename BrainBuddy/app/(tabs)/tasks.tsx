@@ -26,7 +26,7 @@ const createDate = (days: number, hours?: number, minutes?: number) => {
   return date.toISOString();
 };
 
-const mockTasks: Task[] = [
+export const mockTasks: Task[] = [
   // Deadline Tasks
   { name: 'Finalize Q4 report', date: createDate(10, 23, 59), date_type: 'deadline', priority: 1, estimated_time: 180, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 3 },
   { name: 'Submit project proposal', date: createDate(5, 17, 0), date_type: 'deadline', priority: 2, estimated_time: 120, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 4 },
