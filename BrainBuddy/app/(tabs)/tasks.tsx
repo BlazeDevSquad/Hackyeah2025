@@ -18,25 +18,36 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
+const createDate = (days: number, hours?: number, minutes?: number) => {
+ const date = new Date();
+ date.setDate(date.getDate() + days);
+ if (hours !== undefined) date.setHours(hours);
+ if (minutes !== undefined) date.setMinutes(minutes);
+  return date.toISOString();
+};
+
 const mockTasks: Task[] = [
   // Deadline Tasks
-  { name: 'Finalize Q4 report', date: '2025-10-15T23:59:59.000Z', date_type: 'deadline', priority: 1, estimated_time: 180, status: 'planned' },
-  { name: 'Submit project proposal', date: '2025-10-10T17:00:00.000Z', date_type: 'deadline', priority: 2, estimated_time: 120, status: 'planned' },
-  { name: 'Buy birthday gift for Alex', date: '2025-10-08T23:59:59.000Z', date_type: 'deadline', priority: 3, estimated_time: 45, status: 'planned' },
-  { name: 'Research new project management tools with a very long name to test overflow', date: '2025-10-20T23:59:59.000Z', date_type: 'deadline', priority: 3, estimated_time: 90, status: 'planned' },
+  { name: 'Finalize Q4 report', date: createDate(10, 23, 59), date_type: 'deadline', priority: 1, estimated_time: 180, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 3 },
+  { name: 'Submit project proposal', date: createDate(5, 17, 0), date_type: 'deadline', priority: 2, estimated_time: 120, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 4 },
+  { name: 'Buy birthday gift for Alex', date: createDate(3, 23, 59), date_type: 'deadline', priority: 3, estimated_time: 45, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 1 },
+  { name: 'Research new project management tools with a very long name to test overflow', date: createDate(15, 23, 59), date_type: 'deadline', priority: 3, estimated_time: 90, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 2 },
 
-  // Dated Tasks for 2025-10-05
-  { name: 'Team Standup Meeting', date: '2025-10-05T09:00:00.000Z', date_type: 'date', priority: 1, estimated_time: 30, status: 'planned' },
-  { name: 'Doctor\'s Appointment', date: '2025-10-05T14:30:00.000Z', date_type: 'date', priority: 1, estimated_time: 60, status: 'planned' },
+  // Dated Tasks for Today
+  { name: 'Team Standup Meeting', date: createDate(0, 9, 0), date_type: 'date', priority: 1, estimated_time: 30, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 2 },
+  { name: 'Doctor\'s Appointment', date: createDate(0, 14, 30), date_type: 'date', priority: 1, estimated_time: 60, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 1 },
 
-  // Dated Task for 2025-10-06
-  { name: 'Follow up with client', date: '2025-10-06T11:00:00.000Z', date_type: 'date', priority: 2, estimated_time: 45, status: 'planned' },
+  // Dated Task for Tomorrow
+  { name: 'Follow up with client', date: createDate(1, 11, 0), date_type: 'date', priority: 2, estimated_time: 45, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 3 },
 ];
 
+
 const priorityMap = {
-  1: { label: 'High', color: '#ef4444' },
-  2: { label: 'Medium', color: '#f97316' },
-  3: { label: 'Low', color: '#3b82f6' },
+  1: { label: 'Insane', color: '#ef4444' },
+  2: { label: 'High', color: '#f97316' },
+  3: { label: 'Medium', color: '#daf63bff' },
+  4: { label: 'Easy', color: '#4225c5ff' },
+  5: { label: 'No effort', color: '#48ff00ff' },
 };
 
 export default function TasksScreen() {
