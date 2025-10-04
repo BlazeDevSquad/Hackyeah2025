@@ -109,7 +109,7 @@ const RootLayout = () => {
     <Provider store={store}>
       {/* TODO: If you want to use PostHog, uncomment the following lines 👇 */}
       {/* <PostHogProvider client={posthog}> */}
-      <AuthProvider>
+      {/*<AuthProvider>*/}
         {/* TODO: If you want to use RevenueCat, uncomment the following lines 👇 */}
         {/* <RevenueCatProvider> */}
         <GestureHandlerRootView style={{ flex: FLEX.one }}>
@@ -123,7 +123,7 @@ const RootLayout = () => {
         </GestureHandlerRootView>
         {/* </RevenueCatProvider> */}
         {/* TODO: If you want to use RevenueCat, uncomment the following lines 👆 */}
-      </AuthProvider>
+      {/*</AuthProvider>*/}
       {/* </PostHogProvider> */}
       {/* TODO: If you want to use Posthog, uncomment the following lines 👆 */}
     </Provider>

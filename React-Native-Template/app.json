@@ -13,7 +13,6 @@
       "associatedDomains": ["applinks:shipmobilefast.com"],
       "bundleIdentifier": "com.shipmobilefast.app",
       "usesAppleSignIn": true,
-      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "LSApplicationQueriesSchemes": [
           "instagram",
@@ -25,7 +24,6 @@
       }
     },
     "android": {
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#fff"
@@ -64,8 +62,6 @@
       "expo-apple-authentication",
       "expo-notifications",
       "expo-dev-client",
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth",
       "expo-font",
       "react-native-compressor",
       [
