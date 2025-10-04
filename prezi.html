@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BrainBuddy — Pitch Deck (Print-Proof)</title>
+<title>BrainBuddy — Pitch Deck (Print-Proof, Patched)</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
@@ -98,6 +98,63 @@
   }
   .slide{ width:1920px; height:1080px; }
   ==================================================== */
+
+
+  /* ==== ANTI-ARTIFACT PATCH ==== */
+
+  /* 1) Gradientowy tekst – bezpieczniejsze wygładzanie na ekranie */
+  .gtext{
+    -webkit-text-fill-color: transparent;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-stroke: 0.2px rgba(0,0,0,0.01);
+  }
+
+  /* 1a) W DRUKU – fallback na stały kolor (zero halo w PDF) */
+  @media print{
+    .gtext{
+      background: none !important;
+      color: #5f66ff !important;
+      -webkit-text-fill-color: #5f66ff !important;
+      -webkit-text-stroke: 0 !important;
+    }
+  }
+
+  /* 2) Podkreślenia/akcenty – osobny blok, nie text-decoration */
+  .accent, .accent-underline{
+    display:block;
+    height: 1.5mm;
+    width: 18mm;
+    background: linear-gradient(90deg, var(--a), var(--b));
+    border-radius: 1mm;
+    margin: 2mm 0 0;
+    box-shadow: 0 0 0 0.3mm #ffffff;
+  }
+  @media print{
+    .accent, .accent-underline{
+      box-shadow: none;
+    }
+  }
+
+  /* 3) Punktory – mniej cienia na ekranie, SOLID w druku */
+  .list li::before{
+    box-shadow: 0 0 0 0.8mm #ffffffc0, 0 0.8mm 2.2mm rgba(93,80,220,.16);
+  }
+  @media print{
+    .list li::before{
+      background: #6f61ff !important;
+      box-shadow: none !important;
+    }
+  }
+
+  /* 4) Karty/obrysy – bez przezroczystości w PDF */
+  @media print{
+    .card{ box-shadow:none !important; background:#fff !important; }
+    .visual{ box-shadow:none !important; background:#fff !important; }
+  }
+
+  /* 5) Wyłącz ligatury (czasem szwy na gradientach) */
+  h1, h2, .huge, .title{ font-variant-ligatures: none; }
 </style>
 </head>
 <body>
