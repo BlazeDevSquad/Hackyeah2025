@@ -12,35 +12,12 @@ import {
 import { useThemedStyles } from '@/hooks/use-themed-styles';
 import { Task } from '@/constants/types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTasks } from '@/providers/tasks';
 
 // Enable LayoutAnimation for Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-
-const createDate = (days: number, hours?: number, minutes?: number) => {
- const date = new Date();
- date.setDate(date.getDate() + days);
- if (hours !== undefined) date.setHours(hours);
- if (minutes !== undefined) date.setMinutes(minutes);
-  return date.toISOString();
-};
-
-const mockTasks: Task[] = [
-  // Deadline Tasks
-  { name: 'Finalize Q4 report', date: createDate(10, 23, 59), date_type: 'deadline', priority: 1, estimated_time: 180, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 3 },
-  { name: 'Submit project proposal', date: createDate(5, 17, 0), date_type: 'deadline', priority: 2, estimated_time: 120, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 4 },
-  { name: 'Buy birthday gift for Alex', date: createDate(3, 23, 59), date_type: 'deadline', priority: 3, estimated_time: 45, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 1 },
-  { name: 'Research new project management tools with a very long name to test overflow', date: createDate(15, 23, 59), date_type: 'deadline', priority: 3, estimated_time: 90, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 2 },
-
-  // Dated Tasks for Today
-  { name: 'Team Standup Meeting', date: createDate(0, 9, 0), date_type: 'date', priority: 1, estimated_time: 30, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 2 },
-  { name: 'Doctor\'s Appointment', date: createDate(0, 14, 30), date_type: 'date', priority: 1, estimated_time: 60, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 1 },
-
-  // Dated Task for Tomorrow
-  { name: 'Follow up with client', date: createDate(1, 11, 0), date_type: 'date', priority: 2, estimated_time: 45, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 3 },
-];
-
 
 const priorityMap = {
   1: { label: 'Insane', color: '#ef4444' },
@@ -52,7 +29,7 @@ const priorityMap = {
 
 export default function TasksScreen() {
   const { colors } = useThemedStyles();
-  const [tasks, setTasks] = useState<Task[]>(mockTasks);
+  const { tasks } = useTasks(); // Use tasks from the global context
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
 
   const { deadlineTasks, datedTasks } = useMemo(() => {
@@ -85,14 +62,14 @@ export default function TasksScreen() {
   };
 
   const renderTaskItem = (task: Task) => {
-    const isSelected = selectedTask === task.name;
+    const isSelected = selectedTask === task.id;
     const priority = priorityMap[task.priority];
 
     return (
       <TouchableOpacity
-        key={task.name}
+        key={task.id}
         style={[styles.taskCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-        onPress={() => handleTaskPress(task.name)}
+        onPress={() => handleTaskPress(task.id!)}
         activeOpacity={0.7}
       >
         <View style={styles.taskHeader}>
@@ -237,4 +214,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-});
+})
