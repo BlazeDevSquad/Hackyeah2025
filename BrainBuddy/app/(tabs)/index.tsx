@@ -1,4 +1,5 @@
-import BrainBuddy from "../../components/brain-buddy"
-export default function index() {
-    return <BrainBuddy/>
+import { Redirect } from 'expo-router';
+
+export default function Index() {
+  return <Redirect href="/record" />;
 }
