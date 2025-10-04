@@ -9,12 +9,15 @@ import {LoadingView} from './loading-view';
 import {RecordingButton} from './recording-button';
 import {ResultView} from './result-view';
 import {speakText} from "@/utils/tts";
+import { useTasks } from '@/providers/tasks';
+import { parseTaskOperation, processTaskOperations } from '@/utils/gemini';
 
 export default function BrainBuddy() {
   const [showResult, setShowResult] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [geminiResponse, setGeminiResponse] = useState('');
   const { colors } = useThemedStyles();
+  const { tasks, addTask, modifyTask } = useTasks();
 
   const {
     isRecording,
@@ -35,9 +38,13 @@ export default function BrainBuddy() {
       if (finalTranscript) {
         setIsLoading(true);
         try {
-          // TODO: Use gemini and add to storage
-          // const response = await sendToGemini(finalTranscript);
-          setGeminiResponse('Your request was processed successfully!');
+          const geminiTasks = await parseTaskOperation(finalTranscript, tasks);
+          if (geminiTasks) {
+            processTaskOperations(geminiTasks, tasks, addTask, modifyTask);
+            setGeminiResponse('Your request was processed successfully!');
+          } else {
+            setGeminiResponse('Sorry, I could not understand the task. Please try again.');
+          }
         } catch (error) {
           console.error('Error sending to Gemini API:', error);
           setGeminiResponse('Sorry, an error occurred during the request.');

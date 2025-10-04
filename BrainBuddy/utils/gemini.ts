@@ -23,7 +23,7 @@ export async function getStringResponse(prompt: string): Promise<string> {
     }
 }
 
-export async function getJsonResponse(prompt: string): Promise<GeminiTask | null> {
+export async function getJsonResponse(prompt: string): Promise<GeminiTask[] | null> {
     const contents = [{ role: "user", parts: [{ text: prompt }] }];
     let retries = 3;
 
@@ -48,8 +48,13 @@ export async function getJsonResponse(prompt: string): Promise<GeminiTask | null
             const cleanedResponse = rawResponse.replace(/```json|```/g, '').trim();
             const parsedJson = JSON.parse(cleanedResponse);
             
-            if (parsedJson.operation && parsedJson.name && parsedJson.date_type) {
-                return parsedJson as GeminiTask;
+            const potentialTasks = Array.isArray(parsedJson) ? parsedJson : [parsedJson];
+            const isValid = potentialTasks.length > 0 && potentialTasks.every(
+              (task: any) => task.operation && task.name && task.date_type
+            );
+
+            if (isValid) {
+                return potentialTasks as GeminiTask[];
             } else {
                 console.warn(`Attempt ${4 - retries}: Validation failed for response: ${cleanedResponse}. Retrying.`);
                 retries--;
@@ -65,7 +70,7 @@ export async function getJsonResponse(prompt: string): Promise<GeminiTask | null
     return null; 
 }
 
-export async function parseTaskOperation(text: string, tasks: Task[]): Promise<GeminiTask | null> {
+export async function parseTaskOperation(text: string, tasks: Task[]): Promise<GeminiTask[] | null> {
     const mockPrompt = `
 You are a task extraction assistant.
 Your job is to read the user's input about tasks and generate list of JSON objects following the Task interface.
@@ -82,11 +87,11 @@ Rules:
 
 OPERATION:
 
-If the user explicitly says they want to add something new → "Add".
+If the user explicitly says they want to add something new → "add".
 
-If they mention changing/updating an existing task → "Modify".
+If they mention changing/updating an existing task → "modify".
 
-If unclear, infer the most likely option and choose "Add" or "Modify".
+If unclear, infer the most likely option and choose "add" or "modify".
 
 name:
 
@@ -108,7 +113,7 @@ priority, required_stamina, estimated_time:
 
 Estimate values based on context, user's phrasing, and similarity with previous tasks in the provided list.
 
-priority: 1-5 (5 = highest urgency).
+priority: 1-5 (1 = highest urgency).
 
 required_stamina: 1-5 (5 = very demanding task).
 
@@ -124,7 +129,7 @@ Otherwise → "planned".
 
 Output format list of objects
 export interface Task {
-  OPERATION: "Add" | "Modify";
+  operation: "add" | "modify";
   name: string;
   date?: string; // Using string for ISO 8601 datetime format, both deadline and date type can use this field, in case of deadline date means end of deadline
   date_type: "deadline" | "date";
@@ -139,17 +144,19 @@ Output strictly list of new tasks in list of JSON files with no explanation, mar
 
     const full_prompt = `
     ${mockPrompt}
+    Current tasks:
+    ${JSON.stringify(tasks, null, 2)}
+    
     User input:
-    ${text}
-    List of tasks:
-    ${tasks}
+    "${text}"
     `
-    return getJsonResponse(`${mockPrompt}`);
+    return getJsonResponse(full_prompt);
 }
 
 export async function pickNextTask(): Promise<GeminiTask | null> {
     const mockPrompt = `Hello word`;
-    return getJsonResponse(mockPrompt);
+    const response = await getJsonResponse(mockPrompt);
+    return response ? response[0] : null;
 }
 
 export const processTaskOperations = (
@@ -157,15 +164,12 @@ export const processTaskOperations = (
     tasks: Task[],
     addTask: (task: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => void,
     modifyTask: (task: Task) => void
-): string => {
-  const results: string[] = [];
-
+): void => {
   for (const geminiTask of geminiTasks) {
     switch (geminiTask.operation) {
       case 'add': {
         const { operation, ...newTaskData } = geminiTask;
         addTask(newTaskData);
-        results.push(`Added new task: "${newTaskData.name}".`);
         break;
       }
 
@@ -176,9 +180,6 @@ export const processTaskOperations = (
         if (originalTask) {
           const updatedTask = { ...originalTask, ...geminiTask };
           modifyTask(updatedTask);
-          results.push(`Modified task: "${originalTask.name}".`);
-        } else {
-          results.push(`Could not find a task named "${geminiTask.name}" to modify.`);
         }
         break;
       }
@@ -187,15 +188,7 @@ export const processTaskOperations = (
         throw new Error("The 'select' operation is not a supported task modification.");
 
       default:
-        results.push(`Unknown operation '${(geminiTask as any).operation}' for task "${geminiTask.name}".`);
         break;
     }
   }
-
-  if (results.length === 0) {
-    return "No operations were performed.";
-  }
-
-  return results.join('\n');
 };
-
