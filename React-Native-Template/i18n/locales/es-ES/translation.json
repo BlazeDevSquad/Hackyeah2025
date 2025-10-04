@@ -1,0 +1,30 @@
+{
+  "inAppPurchases": {
+    "title": "Prueba Ship Mobile Fast Pro",
+    "subtitle": "Más mensajes en nuestro modelo más potente con funciones premium",
+    "info": "Se renueva solo por {{price}} cada {{period}}. Cancela cuando quieras. Si no te convence, te devolvemos la lana en 7 días.",
+    "lifetime-info": "Acceso de por vida por {{price}}. Incluye garantía de devolución de dinero de 7 días.",
+    "cards": {
+      "feature1": {
+        "title": "Feature Title 1",
+        "description": "Feature Description 1"
+      },
+      "feature2": {
+        "title": "Feature Title 2",
+        "description": "Feature Description 2"
+      },
+      "feature3": {
+        "title": "Feature Title 3",
+        "description": "Feature Description 3"
+      },
+      "feature4": {
+        "title": "Feature Title 4",
+        "description": "Feature Description 4"
+      },
+      "feature5": {
+        "title": "Feature Title 5",
+        "description": "Feature Description 5"
+      }
+    }
+  }
+}

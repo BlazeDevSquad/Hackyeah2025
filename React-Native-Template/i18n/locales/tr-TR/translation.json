@@ -1,0 +1,30 @@
+{
+  "inAppPurchases": {
+    "title": "Ship Mobile Fast Pro'yu Deneyin",
+    "subtitle": "En güçlü modelimizle daha fazla mesaj",
+    "info": "{{price}} / {{period}} ile otomatik yenileme. Her zaman iptal edebilirsiniz. 7 günlük para iade garantisi içerir.",
+    "lifetime-info": "Pro erişim için {{price}}. 7 günlük para iade garantisi içerir.",
+    "cards": {
+      "feature1": {
+        "title": "Feature Title 1",
+        "description": "Feature Description 1"
+      },
+      "feature2": {
+        "title": "Feature Title 2",
+        "description": "Feature Description 2"
+      },
+      "feature3": {
+        "title": "Feature Title 3",
+        "description": "Feature Description 3"
+      },
+      "feature4": {
+        "title": "Feature Title 4",
+        "description": "Feature Description 4"
+      },
+      "feature5": {
+        "title": "Feature Title 5",
+        "description": "Feature Description 5"
+      }
+    }
+  }
+}

@@ -1,0 +1,197 @@
+// This file exports a configuration object for your Expo app
+module.exports = () => ({
+  "expo": {
+    // The name of your app as it appears on the device (e.g Ship Mobile Fast)
+    "name": "YOUR APP NAME", 
+    
+    // A unique identifier for your app in the Expo ecosystem (use lowercase, no spaces) (e.g ship-mobile-fast)
+    "slug": "your-app-name",
+    
+    // The version number of your app (follows semver)
+    "version": "1.0.0",
+    
+    // Controls the allowed orientations of your app
+    "orientation": "portrait",
+    
+    // The main icon of your app (1024x1024 PNG recommended)
+    "icon": "./assets/images/icon.png",
+    
+    // The URL scheme for deep linking (usually matches your bundle ID) (e.g com.shipmobilefast.app)
+    "scheme": "your.bundle.identifier",
+    
+    // Controls whether the app follows system light/dark mode
+    "userInterfaceStyle": "automatic",
+    
+    // Enables the new React Native architecture
+    "newArchEnabled": true,
+
+    // iOS specific configurations
+    "ios": {
+      // Whether the app works on iPad
+      "supportsTablet": false,
+      
+      // Domains for Universal Links (deep linking) (e.g https://shipmobilefast.com)
+      "associatedDomains": ["applinks:yourdomain.com"],
+      
+      // Your app's unique identifier in the Apple ecosystem (e.g com.shipmobilefast.app)
+      "bundleIdentifier": "your.bundle.identifier",
+      
+      // Enable Sign in with Apple functionality (true or false)
+      "usesAppleSignIn": true,
+      
+      // Path to Firebase iOS configuration file (e.g GoogleService-Info.plist)
+      "googleServicesFile": "./GoogleService-Info.plist",
+      
+      // iOS specific permissions and capabilities
+      "infoPlist": {
+        // URL schemes that your app can open (for social sharing)
+        "LSApplicationQueriesSchemes": [
+          "instagram",
+          "instagram-stories",
+          "facebook",
+          "facebook-stories"
+        ],
+        // Camera usage permission message (e.g Ship Mobile Fast needs access to your Camera.)
+        "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera."
+      }
+    },
+
+    // Android specific configurations
+    "android": {
+      // Path to Firebase Android configuration file (e.g google-services.json)
+      "googleServicesFile": "./google-services.json",
+      
+      // Configuration for Android adaptive icons
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#fff"
+      },
+      
+      // Your app's unique identifier in the Android ecosystem
+      "package": "your.bundle.identifier",
+      
+      // Required Android permissions
+      "permissions": [
+        // Permission for AdMob advertising ID
+        "com.google.android.gms.permission.AD_ID",
+        // Permission for camera access
+        "android.permission.CAMERA"
+      ],
+      
+      // Deep linking configuration for Android
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              // Scheme for deep linking (e.g https)
+              "scheme": "https",
+              // Host for deep linking (e.g shipmobilefast.com)
+              "host": "yourdomain.com",
+              // Path prefix for deep linking (e.g /)
+              "pathPrefix": "/"
+            },
+            {
+              // Your app's unique identifier in the Android ecosystem (e.g com.shipmobilefast.app)
+              "scheme": "your.bundle.identifier" 
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+
+    // Web platform configurations
+    "web": {
+      // The bundler to use for web builds
+      "bundler": "metro",
+      // The output format for web builds
+      "output": "static",
+      // Web favicon path
+      "favicon": "./assets/images/favicon.png"
+    },
+
+    // Expo plugins for additional functionality
+    "plugins": [
+      // File-based routing system
+      "expo-router",
+      // Internationalization support
+      "expo-localization",
+      // Apple authentication
+      "expo-apple-authentication",
+      // Push notifications
+      "expo-notifications",
+      // Development client support
+      "expo-dev-client",
+      // Firebase core functionality
+      "@react-native-firebase/app",
+      // Firebase authentication
+      "@react-native-firebase/auth",
+      // Custom font support
+      "expo-font",
+      // Image compression
+      "react-native-compressor",
+      // Google Sign-In
+      "@react-native-google-signin/google-signin",
+      
+      // Splash screen configuration
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#ffffff",
+          "image": "./assets/images/splash-icon.png",
+          "dark": {
+            "image": "./assets/images/splash-icon.png",
+            "backgroundColor": "#222222"
+          },
+          "imageWidth": 200
+        }
+      ],
+      
+      // iOS build properties
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "deploymentTarget": "15.1"
+          }
+        }
+      ],
+      
+      // iOS tracking transparency prompt
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      
+      // Google AdMob configuration (e.g ca-app-pub-...~...) (you need to add this if you want to use ads)
+      [
+        "react-native-google-mobile-ads",
+        {
+          // Android AdMob ID (e.g ca-app-pub-...~...)
+          "androidAppId": "YOUR-ANDROID-ADMOB-ID",
+          // iOS AdMob ID (e.g ca-app-pub-...~...)
+          "iosAppId": "YOUR-IOS-ADMOB-ID"
+        }
+      ],
+      
+      // Camera functionality configuration
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "$(PRODUCT_NAME) needs access to your Camera."
+        }
+      ],
+    ],
+
+    // Experimental features
+    "experiments": {
+      // Enable typed routing for better type safety
+      "typedRoutes": true,
+    },
+  };
+});
