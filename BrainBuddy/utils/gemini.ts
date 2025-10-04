@@ -109,11 +109,11 @@ date_type and date:
 
 If the task must be finished before a time limit or has a due timeframe (e.g., “by tomorrow,” “before Friday,” “in 2 days”, "till the end of the week") → "deadline".
 
-If the user specifies an exact date (e.g., “on October 7,” “on Monday”) → "date".
+If the user specifies an exact date (e.g., “on October 7,” “on Monday”, "now", "at the moment", "tomorrow") → "date".
 
 Infer the date relative to the current date if given in natural language (e.g., “tomorrow” = current_date + 1 day).
 
-Format date as "YYYY-MM-DD".
+Format date as "YYYY-MM-DDThh:mm:ssZ". It must be included every single time.
 
 priority, required_stamina, estimated_time:
 
@@ -137,7 +137,7 @@ Output format list of objects
 export interface Task {
   operation: "add" | "modify";
   name: string;
-  date?: string; // Using string for ISO 8601 datetime format, both deadline and date type can use this field, in case of deadline date means end of deadline
+  date?: string;
   date_type: "deadline" | "date";
   priority: 1 | 2 | 3 | 4 | 5;
   required_stamina: 1 | 2 | 3 | 4 | 5;
@@ -145,7 +145,7 @@ export interface Task {
   status: "planned" | "done" | "in progress";
 }
 
-Output strictly list of new tasks in list of JSON files with no explanation, markdown, or extra text.
+Output strictly list of new tasks in list of JSON files with no explanation, markdown, or extra text. All fields must be filled.
 `;
 
     const full_prompt = `
