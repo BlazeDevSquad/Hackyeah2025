@@ -1,10 +1,7 @@
 import { Stack } from "expo-router";
-import {STTProvider} from "@/providers/stt";
 
-export default function RootLayout() {
-    return (
-        <STTProvider>
-            <Stack screenOptions={{ headerShown: true }} />
-        </STTProvider>
-    );
+export default function TabsLayout() {
+  return (
+    <Stack screenOptions={{ headerShown: false }} />
+  );
 }

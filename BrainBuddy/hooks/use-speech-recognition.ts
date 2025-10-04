@@ -9,11 +9,14 @@ export const useSpeechRecognition = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [partialTranscript, setPartialTranscript] = useState('');
-  
+
+  // Use a ref to store the latest transcript immediately, avoiding state update delays.
+  const transcriptRef = useRef('');
+
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  // Pulsating animation
+  // Pulsating animation for the recording button
   useEffect(() => {
     let animation: Animated.CompositeAnimation | null = null;
     if (isRecording) {
@@ -39,15 +42,15 @@ export const useSpeechRecognition = () => {
     }
     return () => animation?.stop();
   }, [isRecording]);
-  
-  // 60-second recording timer
+
+  // Automatic 60-second recording timer
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isRecording) {
       timer = setTimeout(() => {
-        console.log('[STT_DEBUG] 60-second recording limit reached. Stopping automatically.');
+        console.log('[STT] 60-second recording limit reached. Stopping automatically.');
         stopRecording();
-      }, 60000); // 60 seconds
+      }, 60000);
     }
     return () => clearTimeout(timer);
   }, [isRecording]);
@@ -55,81 +58,77 @@ export const useSpeechRecognition = () => {
   useSpeechRecognitionEvent('result', (e) => {
     if (!e.results?.length) return;
 
-    const result = e.results[0];
-    const currentTranscript = result.transcript || '';
+    // The full transcript from the event, including all parts.
+    const fullResultTranscript = e.results.map((r) => r.transcript).join(' ');
 
     if (e.isFinal) {
-      console.log(`[STT_DEBUG] Final result received: "${currentTranscript}"`);
-      setTranscript(prev => prev ? `${prev} ${currentTranscript}` : currentTranscript);
+      // When a final result is received, update the ref and state.
+      transcriptRef.current = fullResultTranscript;
+      setTranscript(fullResultTranscript);
       setPartialTranscript('');
     } else {
-      console.log(`[STT_DEBUG] Partial result received: "${currentTranscript}"`);
-      setPartialTranscript(currentTranscript);
+      // Otherwise, it's a partial result.
+      setPartialTranscript(fullResultTranscript);
     }
   });
 
   useSpeechRecognitionEvent('end', () => {
-    console.log('[STT_DEBUG] Speech recognition "end" event fired.');
     if (isRecording) {
-      // Ensure recording state is synced if the service ends unexpectedly
       setIsRecording(false);
     }
   });
-  
+
   useSpeechRecognitionEvent('error', (e) => {
-    console.error('[STT_DEBUG] Speech recognition "error" event fired:', e);
+    console.error('[STT] Speech recognition error:', e);
     setIsRecording(false);
     setPartialTranscript('');
     Animated.timing(scaleAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
   });
 
   const startRecording = async () => {
-    console.log('[STT_DEBUG] Attempting to start recording...');
+    console.log('[STT] Attempting to start recording...');
     try {
-      console.log('[STT_DEBUG] Requesting speech recognition permissions...');
       const permissions = await STT.requestPermissionsAsync();
       if (!permissions.granted) {
-        console.warn('[STT_DEBUG] Speech recognition permission not granted.');
+        console.warn('[STT] Speech recognition permission not granted.');
         return;
       }
-      console.log('[STT_DEBUG] Permissions granted.');
       
       Animated.timing(scaleAnim, { toValue: 0.9, duration: 200, useNativeDriver: true }).start();
-      console.log('[STT_DEBUG] Resetting previous transcripts.');
-      setTranscript('');
-      setPartialTranscript('');
       
-      console.log('[STT_DEBUG] Calling STT.start()...');
+      // Reset states for a new session
+      reset();
+      
       await STT.start({
         lang: 'en-US',
         interimResults: true,
         continuous: true,
       });
 
-      console.log('[STT_DEBUG] STT started successfully. Setting isRecording to true.');
       setIsRecording(true);
     } catch (error) {
-      console.error('[STT_DEBUG] Failed to start speech recognition:', error);
+      console.error('[STT] Failed to start speech recognition:', error);
       Animated.timing(scaleAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     }
   };
 
-  const stopRecording = async () => {
-    console.log('[STT_DEBUG] Attempting to stop recording...');
+  const stopRecording = async (): Promise<string> => {
+    console.log('[STT] Attempting to stop recording...');
     Animated.timing(scaleAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     setIsRecording(false);
     try {
       await STT.stop();
-      console.log('[STT_DEBUG] STT stopped successfully.');
     } catch (error)  {    
-      console.error('[STT_DEBUG] Error stopping speech recognition:', error);
+      console.error('[STT] Error stopping speech recognition:', error);
     }
+    // Return the final transcript from the ref to avoid race conditions.
+    return transcriptRef.current;
   };
   
   const reset = () => {
-    console.log('[STT_DEBUG] Reset function called. Clearing transcripts.');
     setTranscript('');
     setPartialTranscript('');
+    transcriptRef.current = '';
   };
 
   return {

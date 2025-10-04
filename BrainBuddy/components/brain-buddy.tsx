@@ -20,6 +20,7 @@ export default function BrainBuddy() {
   const {
     isRecording,
     transcript,
+    partialTranscript,
     pulseAnim,
     scaleAnim,
     startRecording,
@@ -29,44 +30,33 @@ export default function BrainBuddy() {
 
   const handlePress = async () => {
     if (isRecording) {
-      console.log('[DEBUG] Stopping recording...');
-      await stopRecording();
+      // Stop recording and wait for the final transcript. This avoids race conditions.
+      const finalTranscript = await stopRecording();
+      console.debug(`Got finalTranscript: ${finalTranscript}`)
       
-      // Use a short timeout to ensure the final transcript is captured
-      setTimeout(async () => {
-        console.log(`[DEBUG] Final Transcript captured: "${transcript}"`);
-        
-        if (transcript) {
-          console.log('[DEBUG] Setting loading state to: true');
-          setIsLoading(true);
-          try {
-            console.log(`[DEBUG] Sending to Gemini API: "${transcript}"`);
-            const response = await sendToGemini(transcript);
-            console.log(`[DEBUG] Received from Gemini API: "${response}"`);
-            setGeminiResponse(response);
-          } catch (error) {
-            console.error('[DEBUG] Error sending to Gemini API:', error);
-            setGeminiResponse('Sorry, an error occurred during the request.');
-          } finally {
-            console.log('[DEBUG] Setting loading state to: false');
-            setIsLoading(false);
-            console.log('[DEBUG] Setting showResult state to: true');
-            setShowResult(true);
-          }
-        } else {
-            console.warn('[DEBUG] No speech was detected.');
-            setGeminiResponse('No speech was detected. Please try again.');
-            setShowResult(true);
+      if (finalTranscript) {
+        setIsLoading(true);
+        try {
+          const response = await sendToGemini(finalTranscript);
+          setGeminiResponse(response);
+        } catch (error) {
+          console.error('Error sending to Gemini API:', error);
+          setGeminiResponse('Sorry, an error occurred during the request.');
+        } finally {
+          setIsLoading(false);
+          setShowResult(true);
         }
-      }, 500);
+      } else {
+        console.warn('[App] No speech was detected.');
+        setGeminiResponse('No speech was detected. Please try again.');
+        setShowResult(true);
+      }
     } else {
-      console.log('[DEBUG] Starting recording...');
       startRecording();
     }
   };
 
   const handleReset = () => {
-    console.log('[DEBUG] Resetting state for new recording.');
     reset();
     setGeminiResponse('');
     setShowResult(false);
