@@ -39,6 +39,9 @@ export async function getJsonResponse(prompt: string): Promise<GeminiTask[] | nu
             );
 
             const rawResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            console.log("---GEMINI RAW OUTPUT---");
+            console.log(rawResponse);
+            console.log("-----------------------");
             if (!rawResponse) {
                 console.warn(`Attempt ${4 - retries}: Gemini returned an empty response. Retrying.`);
                 retries--;
@@ -153,6 +156,9 @@ Output strictly list of new tasks in list of JSON files with no explanation, mar
     User input:
     "${text}"
     `
+    console.log("---GEMINI PROMPT---");
+    console.log(full_prompt);
+    console.log("-------------------");
     return getJsonResponse(full_prompt);
 }
 
