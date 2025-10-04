@@ -1,9 +1,6 @@
-import {
-  ExpoSpeechRecognitionModule as STT,
-  useSpeechRecognitionEvent,
-} from 'expo-speech-recognition';
-import { useEffect, useRef, useState } from 'react';
-import { Animated, Easing } from 'react-native';
+import {ExpoSpeechRecognitionModule as STT, useSpeechRecognitionEvent,} from 'expo-speech-recognition';
+import {useEffect, useRef, useState} from 'react';
+import {Animated, Easing} from 'react-native';
 
 export const useSpeechRecognition = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -106,12 +103,12 @@ export const useSpeechRecognition = () => {
       
       // Reset states for a new session
       reset();
-      
-      await STT.start({
-        lang: 'en-US',
-        interimResults: true,
-        continuous: true, // Keep true to allow long recordings controlled by the user
-      });
+
+        STT.start({
+            lang: 'en-US',
+            interimResults: true,
+            continuous: true, // Keep true to allow long recordings controlled by the user
+        });
 
       setIsRecording(true);
     } catch (error) {
@@ -125,7 +122,7 @@ export const useSpeechRecognition = () => {
     Animated.timing(scaleAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     setIsRecording(false);
     try {
-      await STT.stop();
+    STT.stop();
     } catch (error)  {    
       console.error('[STT] Error stopping speech recognition:', error);
     }

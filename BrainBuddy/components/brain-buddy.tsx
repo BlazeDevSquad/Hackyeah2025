@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { View } from 'react-native';
-import { styles } from '../constants/styles';
+import React, {useState} from 'react';
+import {View} from 'react-native';
+import {styles} from '@/constants/styles';
 import useGemini from '../hooks/use-gemini';
-import { useSpeechRecognition } from '../hooks/use-speech-recognition';
-import { useThemedStyles } from '../hooks/use-themed-styles';
-import { Header } from './header';
-import { Instructions } from './instructions';
-import { LoadingView } from './loading-view';
-import { RecordingButton } from './recording-button';
-import { ResultView } from './result-view';
+import {useSpeechRecognition} from '@/hooks/use-speech-recognition';
+import {useThemedStyles} from '@/hooks/use-themed-styles';
+import {Header} from './header';
+import {Instructions} from './instructions';
+import {LoadingView} from './loading-view';
+import {RecordingButton} from './recording-button';
+import {ResultView} from './result-view';
+import {speakText} from "@/utils/tts";
 
 export default function BrainBuddy() {
   const [showResult, setShowResult] = useState(false);
@@ -67,6 +68,7 @@ export default function BrainBuddy() {
   }
 
   if (showResult) {
+      speakText(geminiResponse)
     return <ResultView geminiResponse={geminiResponse} onReset={handleReset} />;
   }
 
