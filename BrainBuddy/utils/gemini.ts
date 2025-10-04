@@ -162,11 +162,74 @@ Output strictly list of new tasks in list of JSON files with no explanation, mar
     return getJsonResponse(full_prompt);
 }
 
-export async function pickNextTask(): Promise<GeminiTask | null> {
-    const mockPrompt = `Hello word`;
-    const response = await getJsonResponse(mockPrompt);
-    return response ? response[0] : null;
+export async function selectTask(text: string, tasks: Task[]): Promise<string> {
+    const prompt = `
+You are a Daily Task Selection Assistant that helps the user decide what to do when they have a specific amount of free time.
+The user will tell you how much time they have (for example: “I have 30 minutes", "I have some free time"), and you will receive a list of tasks in JSON format following this structure:
+
+Here is the text provided by the user:
+${text}
+
+Here is the current list of tasks:
+${JSON.stringify(tasks.filter(t => t.status !== 'done'), null, 2)}
+
+export interface Task {
+  id?: string;
+  name: string;
+  date?: string; // Using string for ISO 8601 datetime format, both deadline and date type can use this field, in case of deadline date means end of deadline
+  date_type: "deadline" | "date";
+  created_at: Date;
+  updated_at: Date;
+  priority: 1 | 2 | 3 | 4 | 5;
+  required_stamina: 1 | 2 | 3 | 4 | 5;
+  estimated_time: number; // in minutes
+  status: "planned" | "done" | "in progress";
 }
+
+Your Goal
+
+Based on the given list and the user's available time:
+
+Choose the most suitable task the user can realistically do right now.
+
+If no full task fits, suggest doing a smaller portion of a high-priority task.
+
+If there's very little time, suggest something quick and useful.
+
+If there's plenty of time, recommend the most important and high-priority task that fits.
+
+Take into account:
+
+Priority (5 = highest importance)
+
+Time available
+
+Stamina requirement (don't propose very demanding tasks for short breaks)
+
+Status (ignore tasks already done)
+
+Deadlines (prefer tasks with closer deadlines or haave date_type "date" and todays date in date field)
+
+
+Output Format
+
+Respond with a natural, spoken-style message that a voice assistant could read aloud — no JSON, no formatting, no lists.
+Keep it clear, conversational, and motivating.
+
+Example outputs:
+
+“You could use this half hour to write a short section of your thesis — it's one of your top priorities and fits perfectly in this time.”
+
+“You've got 20 minutes free. That's just right to review your notes or read a few pages from your research article.”
+
+“There's not enough time to finish the full task, but you could make progress by outlining the next part of your app feature.”
+
+Provide just one suggestion
+`;
+
+    return getStringResponse(prompt);
+}
+
 
 export const processTaskOperations = (
     geminiTasks: GeminiTask[],

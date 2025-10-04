@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: '500',
   },
   circleContainer: {

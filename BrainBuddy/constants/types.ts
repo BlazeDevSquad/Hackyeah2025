@@ -21,3 +21,7 @@ export interface GeminiTask {
   estimated_time: number; // in minutes
   status: "planned" | "done" | "in progress";
 }
+
+export interface OperationPick {
+  operation: "select" | "update";
+}
