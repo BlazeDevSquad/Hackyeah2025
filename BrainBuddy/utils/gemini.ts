@@ -326,28 +326,56 @@ export const processTaskOperations = (
     tasks: Task[],
     addTask: (task: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => void,
     modifyTask: (task: Task) => void
-): void => {
+): string => {
+  let addedCount = 0;
+  let modifiedCount = 0;
+
   for (const geminiTask of geminiTasks) {
     switch (geminiTask.operation) {
       case 'add': {
         const { operation, ...newTaskData } = geminiTask;
         addTask(newTaskData);
+        addedCount++;
         break;
       }
-
       case 'modify': {
-
-        const originalTask = tasks.find(t => t.name === geminiTask.name);
-
+        const originalTask = tasks.find(t => t.name.toLowerCase() === geminiTask.name.toLowerCase());
         if (originalTask) {
           const updatedTask = { ...originalTask, ...geminiTask };
           modifyTask(updatedTask);
+          modifiedCount++;
+        } else {
+          const { operation, ...newTaskData } = geminiTask;
+          addTask(newTaskData);
+          addedCount++;
         }
         break;
       }
-
       default:
         break;
     }
   }
+  if (geminiTasks.length === 1) {
+    const task = geminiTasks[0];
+    if (addedCount === 1 && modifiedCount === 0) {
+      return `I've added the task: ${task.name}.`;
+    }
+    if (modifiedCount === 1 && addedCount === 0) {
+      return `I've updated the task: ${task.name}.`;
+    }
+  }
+
+  const summaryParts: string[] = [];
+  if (addedCount > 0) {
+    summaryParts.push(`Added ${addedCount} task${addedCount > 1 ? 's' : ''}`);
+  }
+  if (modifiedCount > 0) {
+    summaryParts.push(`Modified ${modifiedCount} task${modifiedCount > 1 ? 's' : ''}`);
+  }
+
+  if (summaryParts.length === 0) {
+    return 'Your request was processed, but no tasks were changed.';
+  }
+
+  return `Done. ${summaryParts.join(' and ')}.`;
 };
