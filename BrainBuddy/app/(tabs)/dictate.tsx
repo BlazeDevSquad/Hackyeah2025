@@ -15,6 +15,7 @@ import {
 } from "expo-speech-recognition";
 import {useSTT} from "@/providers/stt";
 import useGemini from "@/axios/axios";
+import {speakText} from "@/utils/tts";
 
 export default function Dictate() {
     const {transcript, setTranscript, listening, setListening} = useSTT();
@@ -52,6 +53,9 @@ export default function Dictate() {
             setAiResponse(reply);
         } catch (err) {
             setAiResponse("❌ Błąd komunikacji z Gemini");
+        }
+        finally {
+            speakText(aiResponse);
         }
     });
 

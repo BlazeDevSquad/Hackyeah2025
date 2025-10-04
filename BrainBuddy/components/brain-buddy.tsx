@@ -61,7 +61,7 @@ export default function BrainBuddy() {
       }, 500);
     } else {
       console.log('[DEBUG] Starting recording...');
-      startRecording();
+      await startRecording();
     }
   };
 
