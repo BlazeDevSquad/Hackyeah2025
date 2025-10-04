@@ -1,16 +1,21 @@
 {
   "expo": {
     "name": "BrainBuddy",
-    "slug": "BrainBuddy",
+    "slug": "brainbuddyblaze",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "brainbuddy",
+    "icon": "./assets/images/brainLogoQuality.png",
+    "scheme": "brainbuddyblaze",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.brainbuddydev.app"
+      "bundleIdentifier": "com.verscup.brainbuddyblaze",
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Allow $(PRODUCT_NAME) to recognize speech.",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use microphone.",
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access photo library, so you can select or upload images."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -21,18 +26,21 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.brainbuddydev.app"
+      "package": "com.verscup.brainbuddyblaze",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/brainLogoQuality.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/brainLogoQuality.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -41,14 +49,23 @@
           }
         }
       ],
-      ["expo-speech-recognition", {
-        "microphonePermission": "Pozwól $(PRODUCT_NAME) używać mikrofonu.",
-        "speechRecognitionPermission": "Pozwól $(PRODUCT_NAME) rozpoznawać mowę."
-      }]
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to use microphone.",
+          "speechRecognitionPermission": "Allow $(PRODUCT_NAME) to recognize speech."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fd320b5e-f2ec-4e2b-9f7b-6c6d1d240243"
+      }
     }
   }
 }
