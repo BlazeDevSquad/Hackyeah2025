@@ -35,9 +35,9 @@ export default function BrainBuddy() {
       if (finalTranscript) {
         setIsLoading(true);
         try {
+          // TODO: Use gemini and add to storage
           // const response = await sendToGemini(finalTranscript);
           setGeminiResponse('Your request was processed successfully!');
-          setGeminiResponse(finalTranscript);
         } catch (error) {
           console.error('Error sending to Gemini API:', error);
           setGeminiResponse('Sorry, an error occurred during the request.');
