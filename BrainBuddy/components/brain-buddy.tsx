@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {View} from 'react-native';
 import {styles} from '@/constants/styles';
-import useGemini from '../hooks/use-gemini';
 import {useSpeechRecognition} from '@/hooks/use-speech-recognition';
 import {useThemedStyles} from '@/hooks/use-themed-styles';
 import {Header} from './header';
@@ -16,7 +15,6 @@ export default function BrainBuddy() {
   const [isLoading, setIsLoading] = useState(false);
   const [geminiResponse, setGeminiResponse] = useState('');
   const { colors } = useThemedStyles();
-  const { sendToGemini } = useGemini();
 
   const {
     isRecording,
@@ -31,15 +29,15 @@ export default function BrainBuddy() {
 
   const handlePress = async () => {
     if (isRecording) {
-      // Stop recording and wait for the final transcript. This avoids race conditions.
       const finalTranscript = await stopRecording();
       console.debug(`Got finalTranscript: ${finalTranscript}`)
       
       if (finalTranscript) {
         setIsLoading(true);
         try {
-          const response = await sendToGemini(finalTranscript);
-          setGeminiResponse(response);
+          // const response = await sendToGemini(finalTranscript);
+          setGeminiResponse('Your request was processed successfully!');
+          setGeminiResponse(finalTranscript);
         } catch (error) {
           console.error('Error sending to Gemini API:', error);
           setGeminiResponse('Sorry, an error occurred during the request.');
