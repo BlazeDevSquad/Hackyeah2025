@@ -1,18 +1,18 @@
-import React, { useMemo, useState } from 'react';
+import React, {useMemo, useState} from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  LayoutAnimation,
-  Platform,
-  UIManager,
+    LayoutAnimation,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    UIManager,
+    View,
 } from 'react-native';
-import { useThemedStyles } from '@/hooks/use-themed-styles';
-import { Task } from '@/constants/types';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useTasks } from '@/providers/tasks';
+import {useThemedStyles} from '@/hooks/use-themed-styles';
+import {Task} from '@/constants/types';
+import {MaterialCommunityIcons} from '@expo/vector-icons';
+import {useTasks} from '@/providers/tasks';
 
 // Enable LayoutAnimation for Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {

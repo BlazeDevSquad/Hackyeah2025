@@ -2,7 +2,6 @@ import React, {useCallback, useMemo, useState} from "react";
 import {Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import {Calendar, EventRenderer, type ICalendarEventBase} from "react-native-big-calendar";
-import {addMinutes} from "date-fns";
 import {useFocusEffect} from "@react-navigation/native";
 import {priorityMap} from "@/app/(tabs)/tasks";
 import {useTasks} from "@/providers/tasks";
@@ -65,10 +64,6 @@ function tasksToEventsAll(tasks: Task[]): CalEvent[] {
         .map((t) => {
             const start = toLocalWallTime(t.date!);
 
-            const color =
-                (priorityMap as any)?.[t.priority]?.color ??
-                priorityColors[(t.priority as 1 | 2 | 3 | 4 | 5) ?? 3] ?? "#3b82f6";
-
             if (t.date_type === "deadline") {
                 const end = new Date(start.getTime() + 15 * 60 * 1000);
                 return {
@@ -93,11 +88,7 @@ function tasksToEventsAll(tasks: Task[]): CalEvent[] {
 }
 export default function PlanScreen() {
     const insets = useSafeAreaInsets();
-    const [modalVisible, setModalVisible] = useState(false);
-    const [draftStart, setDraftStart] = useState<Date | null>(null);
-    const [title, setTitle] = useState("");
-    const [duration, setDuration] = useState("60");
-    const {tasks, addTask, modifyTask} = useTasks();
+    const {tasks} = useTasks();
 
 
     const [calKey, setCalKey] = useState(0);
@@ -106,7 +97,7 @@ export default function PlanScreen() {
 
     const [scrollMinutes, setScrollMinutes] = useState(9 * 60);
 
-    const [userEvents, setUserEvents] = useState<CalEvent[]>([]); // 🔹 osobno userowe
+    const [userEvents, setUserEvents] = useState<CalEvent[]>([]);
 
     const [detailsVisible, setDetailsVisible] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<CalEvent | null>(null);
@@ -114,14 +105,10 @@ export default function PlanScreen() {
     const dayTaskEvents = useMemo(() => {
         const evs = tasksToEventsAll(tasks);
         evs.forEach(e => {
-            console.log(
-                "[CAL_EV]",
-                e.title,
-                e.start.toString(),
-            );
+            console.log("[CAL_EV]", e.title, e.start.toString());
         });
         return evs;
-    }, []);
+    }, [tasks]);
     const events = useMemo(() => {
         const ue = userEvents.filter((e) => isSameDay(e.start, currentDate));
         return [...dayTaskEvents, ...ue];
@@ -153,24 +140,6 @@ export default function PlanScreen() {
             setCalKey((k) => k + 1);
         }, [])
     );
-    const theme = useMemo(
-        () => ({
-            palette: {
-                primary: "#60a5fa",
-                secondary: "#94a3b8",
-                nowIndicator: "#22d3ee",
-                moreLabel: "#9CA3AF",
-                background: "#0b0b0c",
-            },
-            cellBorderColor: "rgba(255,255,255,0.08)",
-            hourGuideColor: "rgba(255,255,255,0.08)",
-            hourGuideTextColor: "rgba(255,255,255,0.5)",
-            headerBackgroundColor: "#0b0b0c",
-            headerTextColor: "#e5e7eb",
-            todayName: {color: "#fff", fontWeight: "600"},
-        }),
-        []
-    );
 
     const handlePressCell = (datePressed: Date) => {
         const d = new Date(datePressed);
@@ -178,35 +147,11 @@ export default function PlanScreen() {
         const rounded = m < 15 ? 0 : m < 45 ? 30 : 0;
         if (rounded === 0 && m >= 45) d.setHours(d.getHours() + 1);
         d.setMinutes(rounded, 0, 0);
-
-        setDraftStart(d);
-        setTitle("");
-        setDuration("60");
-        setModalVisible(true);
-    };
-
-    const handleSave = () => {
-        if (!draftStart || !title.trim()) {
-            setModalVisible(false);
-            return;
-        }
-        const dur = Math.max(5, parseInt(duration || "60", 10));
-        const start = draftStart;
-        const end = addMinutes(start, dur);
-        const id = `${start.toISOString()}__${title.trim()}`;
-
-        setUserEvents((prev) => [
-            ...prev,
-            {id, title: title.trim(), start, end, priority: 2},
-        ]);
-
-        setModalVisible(false);
     };
 
     const renderEvent: EventRenderer<CalEvent> = (event, touchableOpacityProps) => {
         const bg = (priorityMap as any)?.[event.priority!]?.color ?? "#3b82f6";
 
-        // ⬇️ wyciągamy key i style, resztę propsów rozlewamy
         const {key: itemKey, style, ...rest} = (touchableOpacityProps ?? {}) as {
             key?: string | number;
             style?: any;
