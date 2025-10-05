@@ -105,7 +105,7 @@ export default function TasksScreen() {
                 <Text style={[styles.detailText, { color: colors.subtext }]}>
                   {task.date_type === 'deadline'
                     ? `Due: ${new Date(task.date).toLocaleDateString([], { month: 'short', day: 'numeric' })}`
-                    : new Date(task.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    : new Date(task.date).toLocaleTimeString([], { hour: '2-digit',timeZone: "UTC" , minute: '2-digit' })}
                 </Text>
               </View>
             )}
