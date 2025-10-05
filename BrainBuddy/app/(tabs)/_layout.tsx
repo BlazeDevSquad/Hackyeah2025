@@ -35,11 +35,11 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="plan"
+                name="home"
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <TabIcon
-                            iconName="calendar-check-outline"
+                            iconName="home-outline"
                             color={focused ? tabIconSelected : tabIconDefault}
                         />
                     ),
