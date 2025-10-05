@@ -13,17 +13,16 @@ import { useThemedStyles } from '@/hooks/use-themed-styles';
 import { Task } from '@/constants/types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-// Enable LayoutAnimation for Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const createDate = (days: number, hours?: number, minutes?: number) => {
- const date = new Date();
- date.setDate(date.getDate() + days);
- if (hours !== undefined) date.setHours(hours);
- if (minutes !== undefined) date.setMinutes(minutes);
-  return date.toISOString();
+export const createDate = (dayOffset: number, hour: number, minute: number) => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + dayOffset);
+    d.setHours(hour, minute, 0, 0);
+    return d;
 };
 
 export const mockTasks: Task[] = [
@@ -34,7 +33,7 @@ export const mockTasks: Task[] = [
   { name: 'Research new project management tools with a very long name to test overflow', date: createDate(15, 23, 59), date_type: 'deadline', priority: 3, estimated_time: 90, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 2 },
 
   // Dated Tasks for Today
-  { name: 'Team Standup Meeting', date: createDate(0, 9, 0), date_type: 'date', priority: 1, estimated_time: 30, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 2 },
+  { name: 'Team Standup Meeting', date: createDate(0, 1, 0), date_type: 'date', priority: 1, estimated_time: 30, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 2 },
   { name: 'Doctor\'s Appointment', date: createDate(0, 14, 30), date_type: 'date', priority: 1, estimated_time: 60, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 1 },
 
   // Dated Task for Tomorrow
@@ -42,7 +41,7 @@ export const mockTasks: Task[] = [
 ];
 
 
-const priorityMap = {
+export const priorityMap = {
   1: { label: 'Insane', color: '#ef4444' },
   2: { label: 'High', color: '#f97316' },
   3: { label: 'Medium', color: '#daf63bff' },

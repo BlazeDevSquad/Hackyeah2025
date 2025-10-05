@@ -1,9 +1,11 @@
 import React, {useCallback, useMemo, useState} from "react";
-import {Dimensions, StyleSheet, Text, View,} from "react-native";
+import {Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
-import {Calendar, type ICalendarEventBase} from "react-native-big-calendar";
+import {Calendar, EventRenderer, type ICalendarEventBase} from "react-native-big-calendar";
 import {addMinutes} from "date-fns";
 import {useFocusEffect} from "@react-navigation/native";
+import {mockTasks, priorityMap} from "@/app/(tabs)/tasks";
+
 
 const priorityColors: Record<number, string> = {
     1: "#dc2626",
@@ -21,9 +23,72 @@ type CalEvent = ICalendarEventBase & {
     priority?: 1 | 2 | 3 | 4 | 5;
 };
 
+const isSameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+const toLocalWallTime = (input: string | Date): Date => {
+    if (input instanceof Date) return input;
+    const s = String(input);
+
+    const m = s
+        .replace(/Z$/i, "")
+        .replace(/[+-]\d{2}:\d{2}$/, "")
+        .match(/^(\d{4})-(\d{2})-(\d{2})[T ]?(\d{2}):(\d{2})(?::(\d{2}))?$/);
+
+    if (m) {
+        const [, Y, M, D, h, min, sec] = m;
+        return new Date(
+            Number(Y),
+            Number(M) - 1,
+            Number(D),
+            Number(h),
+            Number(min),
+            Number(sec ?? "0")
+        );
+    }
+    return new Date(s);
+};
+const two = (n: number) => String(n).padStart(2, "0");
+const formatTime = (d: Date) => `${two(d.getHours())}:${two(d.getMinutes())}`;
+const formatTimeRange = (s: Date, e: Date) => `${formatTime(s)} – ${formatTime(e)}`;
+const priorityLabel = (p?: 1 | 2 | 3 | 4 | 5) => (priorityMap as any)?.[p!]?.label ?? `P${p ?? 3}`;
+
+function tasksToEventsAll(): CalEvent[] {
+    return mockTasks
+        .filter((t) => !!t.date)
+        .map((t) => {
+            const start = toLocalWallTime(t.date!); // <-- KLUCZOWA ZMIANA
+
+            const color =
+                (priorityMap as any)?.[t.priority]?.color ??
+                priorityColors[(t.priority as 1 | 2 | 3 | 4 | 5) ?? 3] ?? "#3b82f6";
+
+            if (t.date_type === "deadline") {
+                const end = new Date(start.getTime() + 15 * 60 * 1000);
+                return {
+                    id: `deadline__${start.toISOString()}__${t.name}`,
+                    title: `Due: ${t.name}`,
+                    start,
+                    end,
+                    priority: t.priority as any,
+                } as CalEvent;
+            } else {
+                const dur = Math.max(5, t.estimated_time || 30);
+                const end = new Date(start.getTime() + dur * 60 * 1000);
+                return {
+                    id: `task__${start.toISOString()}__${t.name}`,
+                    title: t.name,
+                    start,
+                    end,
+                    priority: t.priority as any,
+                } as CalEvent;
+            }
+        });
+}
 export default function PlanScreen() {
     const insets = useSafeAreaInsets();
-    const [events, setEvents] = useState<CalEvent[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [draftStart, setDraftStart] = useState<Date | null>(null);
     const [title, setTitle] = useState("");
@@ -34,6 +99,28 @@ export default function PlanScreen() {
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
     const [scrollMinutes, setScrollMinutes] = useState(9 * 60);
+
+    const [userEvents, setUserEvents] = useState<CalEvent[]>([]); // 🔹 osobno userowe
+
+    const [detailsVisible, setDetailsVisible] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState<CalEvent | null>(null);
+
+    const dayTaskEvents = useMemo(() => {
+        const evs = tasksToEventsAll();
+        evs.forEach(e => {
+            console.log(
+                "[CAL_EV]",
+                e.title,
+                e.start.toString(),
+            );
+        });
+        return evs;
+    }, []);
+    const events = useMemo(() => {
+        const ue = userEvents.filter((e) => isSameDay(e.start, currentDate));
+        return [...dayTaskEvents, ...ue];
+    }, [dayTaskEvents, userEvents, currentDate]);
+
 
     const screen = Dimensions.get("window");
     const tabBarGuess = 90;
@@ -100,24 +187,34 @@ export default function PlanScreen() {
         const dur = Math.max(5, parseInt(duration || "60", 10));
         const start = draftStart;
         const end = addMinutes(start, dur);
-
         const id = `${start.toISOString()}__${title.trim()}`;
-        setEvents((prev) => [
+
+        setUserEvents((prev) => [
             ...prev,
             {id, title: title.trim(), start, end, priority: 2},
         ]);
+
         setModalVisible(false);
     };
 
 
-    const renderEvent = (e: CalEvent) => {
-        const bg = priorityColors[e.priority ?? 3];
+    const renderEvent: EventRenderer<CalEvent> = (event, touchableOpacityProps) => {
+        const bg =
+            (priorityMap as any)?.[event.priority!]?.color ?? "#3b82f6";
+
         return (
-            <View style={[styles.eventCard, {backgroundColor: bg}]}>
-                <Text numberOfLines={2} style={styles.eventTitle}>
-                    {e.title}
+            <TouchableOpacity
+                activeOpacity={0.8}
+                {...touchableOpacityProps}
+                style={[
+                    touchableOpacityProps?.style,
+                    {backgroundColor: bg, borderRadius: 12, paddingHorizontal: 12, justifyContent: "center"},
+                ]}
+            >
+                <Text numberOfLines={2} style={{color: "#fff", fontWeight: "700"}}>
+                    {event.title}
                 </Text>
-            </View>
+            </TouchableOpacity>
         );
     };
 
@@ -125,7 +222,7 @@ export default function PlanScreen() {
         <SafeAreaView style={[styles.safe, {paddingBottom: insets.bottom}]}>
             <View style={styles.headerWrap}>
                 <Text style={styles.headerTitle}>Plan for this Day</Text>
-                <Text style={styles.headerDate}>{formatFullDate(currentDate)}</Text>
+                <Text style={styles.headerDate}>{formatFullDate(currentDate, "en-US")}</Text>
             </View>
 
             <Calendar<CalEvent>
@@ -139,26 +236,98 @@ export default function PlanScreen() {
                 renderHeader={() => null}
                 calendarCellStyle={{ borderWidth: 0, borderLeftColor: "transparent" }}
                 weekStartsOn={1}
-                // bodyContainerStyle={{ borderWidth: 0, borderColor: 'transparent' }}
                 onPressCell={handlePressCell}
-                calendarContainerStyle={{
-                    width: "100%",
+
+                onPressEvent={(e) => {
+                    setSelectedEvent(e);
+                    setDetailsVisible(true);
                 }}
-                onPressEvent={(e) => setEvents((prev) => prev.filter((x) => x.id !== e.id))}
+
+                eventCellStyle={(e) => ({
+                    backgroundColor:
+                        (priorityMap as any)?.[e.priority!]?.color ?? '#3b82f6',
+                    borderRadius: 12,
+                    paddingHorizontal: 12,
+                    justifyContent: 'center',
+                })}
                 renderEvent={renderEvent}
                 scrollOffsetMinutes={scrollMinutes}
                 hideNowIndicator={false}
                 bodyContainerStyle={{
                     borderWidth: 0,
-                    borderColor: 'transparent',
+                    borderColor: "transparent",
                     backgroundColor: "#0b0b0c",
-                    marginLeft: -4,      // przesuwa trochę siatkę w lewo
-                    marginRight: -8,     // usuwa wolną przestrzeń po prawej
-                    // paddingRight: 0,
-                    paddingRight: 22 // ⬅️ margines po lewej i prawej
-
+                    marginLeft: -4,
+                    marginRight: -8,
+                    paddingRight: 22,
                 }}
+                onSwipeEnd={(d) => setCurrentDate(d)}
             />
+
+            <Modal
+                visible={detailsVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setDetailsVisible(false)}
+            >
+                <View style={styles.detailsBackdrop}>
+                    <View style={styles.detailsCard}>
+                        <View style={styles.detailsHeader}>
+                            <Text style={styles.detailsTitle} numberOfLines={2}>
+                                {selectedEvent?.title ?? ""}
+                            </Text>
+                            <Text
+                                style={styles.detailsClose}
+                                onPress={() => setDetailsVisible(false)}
+                            >
+                                ×
+                            </Text>
+                        </View>
+
+                        {!!selectedEvent && (
+                            <>
+                                <View style={styles.rowBetween}>
+                                    <Text style={styles.detailsLabel}>Time</Text>
+                                    <Text style={styles.detailsValue}>
+                                        {formatTimeRange(selectedEvent.start, selectedEvent.end)}
+                                    </Text>
+                                </View>
+
+                                <View style={styles.rowBetween}>
+                                    <Text style={styles.detailsLabel}>Priority</Text>
+                                    <View style={styles.prioPill}>
+                                        <View
+                                            style={[
+                                                styles.prioDot,
+                                                {
+                                                    backgroundColor:
+                                                        (priorityMap as any)?.[selectedEvent.priority!]?.color ??
+                                                        priorityColors[selectedEvent.priority ?? 3],
+                                                },
+                                            ]}
+                                        />
+                                        <Text style={styles.prioText}>{priorityLabel(selectedEvent.priority)}</Text>
+                                    </View>
+                                </View>
+
+                                {userEvents.some((u) => u.id === selectedEvent.id) && (
+                                    <View style={styles.detailsActions}>
+                                        <Text
+                                            style={styles.deleteBtn}
+                                            onPress={() => {
+                                                setUserEvents((prev) => prev.filter((x) => x.id !== selectedEvent.id));
+                                                setDetailsVisible(false);
+                                            }}
+                                        >
+                                            Delete block
+                                        </Text>
+                                    </View>
+                                )}
+                            </>
+                        )}
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -236,5 +405,57 @@ const styles = StyleSheet.create({
         textTransform: "capitalize",
         marginTop: 6,
         marginBottom: 56,
+    },
+    detailsBackdrop: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "flex-end",
+
+    },
+    detailsCard: {
+        backgroundColor: "#111318",
+        padding: 16,
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
+        height: 165
+
+    },
+    detailsHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 6,
+
+
+    },
+    detailsTitle: {color: "#fff", fontSize: 18, fontWeight: "800", flex: 1, paddingRight: 8},
+    detailsClose: {color: "#9ca3af", fontSize: 28, fontWeight: "900", paddingHorizontal: 8, paddingBottom: 2},
+    detailsLabel: {color: "#9ca3af", fontSize: 12, fontWeight: "700"},
+    detailsValue: {color: "#fff", fontSize: 14, fontWeight: "700"},
+    rowBetween: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginTop: 10,
+    },
+    prioPill: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "rgba(255,255,255,0.06)",
+        borderRadius: 999,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        gap: 8,
+    },
+    prioDot: {width: 10, height: 10, borderRadius: 999},
+    prioText: {color: "#e5e7eb", fontWeight: "700", fontSize: 12},
+    detailsActions: {marginTop: 16, alignItems: "flex-end", justifyContent: "space-between", height: 100},
+    deleteBtn: {
+        color: "#ef4444",
+        fontWeight: "800",
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        backgroundColor: "rgba(239,68,68,0.15)",
+        borderRadius: 10,
     },
 });
