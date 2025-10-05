@@ -33,8 +33,9 @@ export default function TasksScreen() {
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
 
   const { deadlineTasks, datedTasks } = useMemo(() => {
-    const deadline = tasks.filter((t) => t.date_type === 'deadline');
-    const dated = tasks
+    const activeTasks = tasks.filter((t) => t.status !== 'done');
+    const deadline = activeTasks.filter((t) => t.date_type === 'deadline');
+    const dated = activeTasks
       .filter((t) => t.date_type === 'date' && t.date)
       .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime());
     return { deadlineTasks: deadline, datedTasks: dated };

@@ -5,6 +5,8 @@ export interface Task {
   date_type: "deadline" | "date";
   created_at: Date;
   updated_at: Date;
+  started_at?: Date;
+  finished_at?: Date;
   priority: 1 | 2 | 3 | 4 | 5;
   required_stamina: 1 | 2 | 3 | 4 | 5;
   estimated_time: number; // in minutes
