@@ -6,6 +6,7 @@ import {useThemedStyles} from '@/hooks/use-themed-styles';
 import {Header} from './header';
 import {Instructions} from './instructions';
 import {LoadingView} from './loading-view';
+import {PreviewBox} from './preview-box';
 import {RecordingButton} from './recording-button';
 import {ResultView} from './result-view';
 import {speakText} from "@/utils/tts";
@@ -110,6 +111,7 @@ export default function BrainBuddy() {
           pulseAnim={pulseAnim}
           scaleAnim={scaleAnim}
         />
+        <PreviewBox transcript={transcript} partialTranscript={partialTranscript} />
       </View>
 
       <Instructions />

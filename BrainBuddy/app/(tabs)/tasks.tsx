@@ -19,12 +19,12 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-export const priorityMap = {
-  1: { label: 'Insane', color: '#ef4444' },
-  2: { label: 'High', color: '#f97316' },
-  3: { label: 'Medium', color: '#daf63bff' },
-  4: { label: 'Easy', color: '#4225c5ff' },
-  5: { label: 'No effort', color: '#48ff00ff' },
+export const priorityMap: Record<number, { label: string; color: string }> = {
+  1: { label: 'Insane', color: '#ef4444' }, // Red
+  2: { label: 'High', color: '#f97316' },   // Orange
+  3: { label: 'Medium', color: '#eab308' },// Yellow
+  4: { label: 'Easy', color: '#3b82f6' },   // Blue
+  5: { label: 'No effort', color: '#10b981' }, // Green
 };
 
 export default function TasksScreen() {
@@ -124,6 +124,9 @@ export default function TasksScreen() {
 
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Deadline Tasks</Text>
+        <Text style={[styles.sectionSubtitle, { color: colors.subtext }]}>
+          These are tasks that need to be completed by a specific date.
+        </Text>
         {deadlineTasks.length > 0 ? (
           deadlineTasks.map(renderTaskItem)
         ) : (
@@ -133,6 +136,9 @@ export default function TasksScreen() {
       
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Scheduled Tasks</Text>
+        <Text style={[styles.sectionSubtitle, { color: colors.subtext }]}>
+          These are tasks planned for a specific day and time.
+        </Text>
         {Object.keys(groupedDatedTasks).length > 0 ? (
           Object.entries(groupedDatedTasks).map(([day, dayTasks]) => (
             <View key={day} style={styles.dayGroup}>
@@ -169,6 +175,10 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: '700',
+    marginBottom: 4,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
     marginBottom: 16,
   },
   dayGroup: {

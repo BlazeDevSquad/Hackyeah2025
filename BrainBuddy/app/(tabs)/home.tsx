@@ -69,9 +69,9 @@ export default function HomeScreen() {
         const weeklyTasks = doneTasks.filter(t => new Date(t.finished_at!) > lastWeek);
 
         const timeSlots = {
-            '0-4': { total: 0, exceeded: 0 }, '4-8': { total: 0, exceeded: 0 },
-            '8-12': { total: 0, exceeded: 0 }, '12-16': { total: 0, exceeded: 0 },
-            '16-20': { total: 0, exceeded: 0 }, '20-24': { total: 0, exceeded: 0 },
+            '0-4h': { total: 0, exceeded: 0 }, '4-8h': { total: 0, exceeded: 0 },
+            '8-12h': { total: 0, exceeded: 0 }, '12-16h': { total: 0, exceeded: 0 },
+            '16-20h': { total: 0, exceeded: 0 }, '20-24h': { total: 0, exceeded: 0 },
         };
 
         doneTasks.forEach(task => {
@@ -79,12 +79,12 @@ export default function HomeScreen() {
             const actual = (new Date(task.finished_at!).getTime() - new Date(task.started_at!).getTime()) / (1000 * 60);
             
             let slot: keyof typeof timeSlots | null = null;
-            if (hour < 4) slot = '0-4';
-            else if (hour < 8) slot = '4-8';
-            else if (hour < 12) slot = '8-12';
-            else if (hour < 16) slot = '12-16';
-            else if (hour < 20) slot = '16-20';
-            else slot = '20-24';
+            if (hour < 4) slot = '0-4h';
+            else if (hour < 8) slot = '4-8h';
+            else if (hour < 12) slot = '8-12h';
+            else if (hour < 16) slot = '12-16h';
+            else if (hour < 20) slot = '16-20h';
+            else slot = '20-24h';
 
             if (slot) {
                 timeSlots[slot].total++;
@@ -117,9 +117,11 @@ export default function HomeScreen() {
                     styles.content,
                 ]}
             >
-                <Text style={[styles.title, { color: colors.text }]}>Welcome 👋</Text>
+                <Text style={[styles.title, { color: colors.text }]}>Welcome Back! 👋</Text>
+                <Text style={[styles.subtitle, { color: colors.subtext, fontSize: 16, marginTop: -12, marginBottom: 12 }]}>Here's a look at your productivity.</Text>
                 
-                <Text style={[styles.subtitle, { color: colors.subtext }]}>Last Week's Performance</Text>
+                <Text style={[styles.subtitle, { color: colors.text }]}>Last Week's Performance</Text>
+                <Text style={[styles.chartDescription, { color: colors.subtext }]}>How well you stuck to your time estimates last week.</Text>
                 <View style={[styles.bigCard, { backgroundColor: colors.card }]}>
                     {weeklyPerformance.length > 0 ? (
                         <PieChart
@@ -134,7 +136,8 @@ export default function HomeScreen() {
                     ) : <Text style={{ color: colors.subtext }}>No data for last week.</Text>}
                 </View>
 
-                <Text style={[styles.subtitle, { color: colors.subtext }]}>All-Time Performance</Text>
+                <Text style={[styles.subtitle, { color: colors.text }]}>All-Time Performance</Text>
+                <Text style={[styles.chartDescription, { color: colors.subtext }]}>Your overall performance since you started.</Text>
                 <View style={[styles.bigCard, { backgroundColor: colors.card }]}>
                     {allTimePerformance.length > 0 ? (
                         <PieChart
@@ -149,7 +152,8 @@ export default function HomeScreen() {
                     ) : <Text style={{ color: colors.subtext }}>No completed tasks yet.</Text>}
                 </View>
 
-                <Text style={[styles.subtitle, { color: colors.subtext }]}>Productivity (% Over Estimate)</Text>
+                <Text style={[styles.subtitle, { color: colors.text }]}>Your Most Productive Times</Text>
+                <Text style={[styles.chartDescription, { color: colors.subtext }]}>Percentage of tasks that went over their estimated time. Lower is better!</Text>
                 <View style={[styles.bigCard, { backgroundColor: colors.card, paddingRight: 24, paddingBottom: 24, paddingHorizontal: 12 }]}>
                    {timeOfDayPerformance.datasets[0].data.some(v => v > 0) ? (
                     <BarChart
@@ -178,7 +182,8 @@ const styles = StyleSheet.create({
         paddingBottom: 40,
     },
     title: { fontSize: 34, fontWeight: "900" },
-    subtitle: { fontSize: 18, fontWeight: "800", marginTop: 6, marginBottom: 8 },
+    subtitle: { fontSize: 18, fontWeight: "800", marginTop: 6, marginBottom: 2 },
+    chartDescription: { fontSize: 14, marginBottom: 8 },
     row: { },
     rowActions: { flexDirection: "row", gap: 12 },
     bigCard: {

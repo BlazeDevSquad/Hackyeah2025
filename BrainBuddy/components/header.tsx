@@ -14,7 +14,7 @@ export const Header = ({ isRecording }: Props) => {
     <View style={styles.header}>
       <Text style={[styles.title, { color: colors.text }]}>BrainBuddy</Text>
       <Text style={[styles.subtitle, { color: colors.subtext }]}>
-        {isRecording ? 'Tap again to stop...' : 'Tap to start...'}
+        {isRecording ? 'Listening... Tap again to stop' : 'Tap the button and speak'}
       </Text>
     </View>
   );
