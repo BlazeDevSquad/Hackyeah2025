@@ -67,6 +67,17 @@ export default function TabsLayout() {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="plan"
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <TabIcon
+                            iconName="calendar-check-outline"
+                            color={focused ? tabIconSelected : tabIconDefault}
+                        />
+                    ),
+                }}
+            />
         </Tabs>
     );
 }

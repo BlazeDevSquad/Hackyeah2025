@@ -6,6 +6,7 @@ import {useFocusEffect} from "@react-navigation/native";
 import {priorityMap} from "@/app/(tabs)/tasks";
 import {useTasks} from "@/providers/tasks";
 import {Task} from "@/constants/types";
+import { useThemedStyles } from "@/hooks/use-themed-styles";
 
 
 const priorityColors: Record<number, string> = {
@@ -89,6 +90,7 @@ function tasksToEventsAll(tasks: Task[]): CalEvent[] {
 export default function PlanScreen() {
     const insets = useSafeAreaInsets();
     const {tasks} = useTasks();
+    const { colors } = useThemedStyles();
 
 
     const [calKey, setCalKey] = useState(0);
@@ -141,6 +143,25 @@ export default function PlanScreen() {
         }, [])
     );
 
+    const theme = useMemo(
+        () => ({
+            palette: {
+                primary: "#60a5fa",
+                secondary: "#94a3b8",
+                nowIndicator: "#22d3ee",
+                moreLabel: colors.subtext,
+                background: colors.background,
+            },
+            cellBorderColor: colors.border,
+            hourGuideColor: colors.border,
+            hourGuideTextColor: colors.subtext,
+            headerBackgroundColor: colors.background,
+            headerTextColor: colors.text,
+            todayName: {color: colors.text, fontWeight: "600"},
+        }),
+        [colors]
+    );
+
     const handlePressCell = (datePressed: Date) => {
         const d = new Date(datePressed);
         const m = d.getMinutes();
@@ -176,10 +197,10 @@ export default function PlanScreen() {
     };
 
     return (
-        <SafeAreaView style={[styles.safe, {paddingBottom: insets.bottom}]}>
+        <SafeAreaView style={[styles.safe, {paddingBottom: insets.bottom, backgroundColor: colors.background}]}>
             <View style={styles.headerWrap}>
-                <Text style={styles.headerTitle}>Plan for this Day</Text>
-                <Text style={styles.headerDate}>{formatFullDate(currentDate, "en-US")}</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>Plan for this Day</Text>
+                <Text style={[styles.headerDate, { color: colors.subtext }]}>{formatFullDate(currentDate, "en-US")}</Text>
             </View>
 
             <Calendar<CalEvent>
@@ -213,7 +234,7 @@ export default function PlanScreen() {
                 bodyContainerStyle={{
                     borderWidth: 0,
                     borderColor: "transparent",
-                    backgroundColor: "#0b0b0c",
+                    backgroundColor: colors.background,
                     marginLeft: -4,
                     marginRight: -8,
                     paddingRight: 22,
@@ -228,13 +249,13 @@ export default function PlanScreen() {
                 onRequestClose={() => setDetailsVisible(false)}
             >
                 <View style={styles.detailsBackdrop}>
-                    <View style={styles.detailsCard}>
+                    <View style={[styles.detailsCard, { backgroundColor: colors.card }]}>
                         <View style={styles.detailsHeader}>
-                            <Text style={styles.detailsTitle} numberOfLines={2}>
+                            <Text style={[styles.detailsTitle, { color: colors.text }]} numberOfLines={2}>
                                 {selectedEvent?.title ?? ""}
                             </Text>
                             <Text
-                                style={styles.detailsClose}
+                                style={[styles.detailsClose, { color: colors.subtext }]}
                                 onPress={() => setDetailsVisible(false)}
                             >
                                 ×
@@ -244,14 +265,14 @@ export default function PlanScreen() {
                         {!!selectedEvent && (
                             <>
                                 <View style={styles.rowBetween}>
-                                    <Text style={styles.detailsLabel}>Time</Text>
-                                    <Text style={styles.detailsValue}>
+                                    <Text style={[styles.detailsLabel, { color: colors.subtext }]}>Time</Text>
+                                    <Text style={[styles.detailsValue, { color: colors.text }]}>
                                         {formatTimeRange(selectedEvent.start, selectedEvent.end)}
                                     </Text>
                                 </View>
 
                                 <View style={styles.rowBetween}>
-                                    <Text style={styles.detailsLabel}>Priority</Text>
+                                    <Text style={[styles.detailsLabel, { color: colors.subtext }]}>Priority</Text>
                                     <View style={styles.prioPill}>
                                         <View
                                             style={[
@@ -263,7 +284,7 @@ export default function PlanScreen() {
                                                 },
                                             ]}
                                         />
-                                        <Text style={styles.prioText}>{priorityLabel(selectedEvent.priority)}</Text>
+                                        <Text style={[styles.prioText, { color: colors.text }]}>{priorityLabel(selectedEvent.priority)}</Text>
                                     </View>
                                 </View>
 
@@ -290,7 +311,7 @@ export default function PlanScreen() {
 }
 
 const styles = StyleSheet.create({
-    safe: {flex: 1, backgroundColor: "#0b0b0c", overflowX: "auto"},
+    safe: {flex: 1, overflowX: "auto"},
     jumpRow: {flexDirection: "row", gap: 8},
     jumpBtn: {
         paddingHorizontal: 10,
@@ -298,7 +319,7 @@ const styles = StyleSheet.create({
         borderRadius: 999,
         backgroundColor: "rgba(255,255,255,0.08)",
     },
-    jumpTxt: {color: "#e5e7eb", fontWeight: "600", fontSize: 12},
+    jumpTxt: {fontWeight: "600", fontSize: 12},
     eventCard: {
         flex: 1,
         borderRadius: 12,
@@ -317,19 +338,16 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     modalCard: {
-        backgroundColor: "#111318",
         padding: 16,
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16,
     },
-    modalTitle: {color: "#fff", fontSize: 18, fontWeight: "800", marginBottom: 8},
-    modalLabel: {color: "#9ca3af", fontSize: 12, fontWeight: "700", marginTop: 8},
+    modalTitle: {fontSize: 18, fontWeight: "800", marginBottom: 8},
+    modalLabel: {fontSize: 12, fontWeight: "700", marginTop: 8},
     input: {
         marginTop: 6,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.12)",
         borderRadius: 10,
-        color: "#fff",
         paddingHorizontal: 12,
         paddingVertical: 10,
         backgroundColor: "rgba(255,255,255,0.04)",
@@ -342,7 +360,7 @@ const styles = StyleSheet.create({
     },
     btn: {flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: "center"},
     btnGhost: {backgroundColor: "rgba(255,255,255,0.06)"},
-    btnGhostTxt: {color: "#e5e7eb", fontWeight: "700"},
+    btnGhostTxt: {fontWeight: "700"},
     btnPrimary: {backgroundColor: "#3b82f6"},
     btnPrimaryTxt: {color: "#fff", fontWeight: "800"},
     headerWrap: {
@@ -351,12 +369,10 @@ const styles = StyleSheet.create({
         paddingBottom: 4,
     },
     headerTitle: {
-        color: "#fff",
         fontSize: 38,
         fontWeight: "800",
     },
     headerDate: {
-        color: "#e5e7eb",
         fontSize: 16,
         fontWeight: "700",
         textTransform: "capitalize",
@@ -370,7 +386,6 @@ const styles = StyleSheet.create({
 
     },
     detailsCard: {
-        backgroundColor: "#111318",
         padding: 16,
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16,
@@ -385,10 +400,10 @@ const styles = StyleSheet.create({
 
 
     },
-    detailsTitle: {color: "#fff", fontSize: 18, fontWeight: "800", flex: 1, paddingRight: 8},
-    detailsClose: {color: "#9ca3af", fontSize: 28, fontWeight: "900", paddingHorizontal: 8, paddingBottom: 2},
-    detailsLabel: {color: "#9ca3af", fontSize: 12, fontWeight: "700"},
-    detailsValue: {color: "#fff", fontSize: 14, fontWeight: "700"},
+    detailsTitle: {fontSize: 18, fontWeight: "800", flex: 1, paddingRight: 8},
+    detailsClose: {fontSize: 28, fontWeight: "900", paddingHorizontal: 8, paddingBottom: 2},
+    detailsLabel: {fontSize: 12, fontWeight: "700"},
+    detailsValue: {fontSize: 14, fontWeight: "700"},
     rowBetween: {
         flexDirection: "row",
         alignItems: "center",
@@ -405,7 +420,7 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     prioDot: {width: 10, height: 10, borderRadius: 999},
-    prioText: {color: "#e5e7eb", fontWeight: "700", fontSize: 12},
+    prioText: {fontWeight: "700", fontSize: 12},
     detailsActions: {marginTop: 16, alignItems: "flex-end", justifyContent: "space-between", height: 100},
     deleteBtn: {
         color: "#ef4444",
