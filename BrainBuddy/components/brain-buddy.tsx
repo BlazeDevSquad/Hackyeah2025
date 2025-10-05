@@ -79,7 +79,7 @@ export default function BrainBuddy() {
       }
     } else {
       startRecording();
-      speakText("Recording started, what would you like to do?");
+      // speakText("Recording started, what would you like to do?");
     }
   };
 
