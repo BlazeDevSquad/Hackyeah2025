@@ -30,23 +30,23 @@ const createFinishedTask = (
     
     let durationMinutes;
     
-    // Peak performance window is now 12 PM to 4 PM (16:00)
-    if (startHour >= 12 && startHour < 16) {
-        // Inside peak window: actual time is always less than estimated time
-        durationMinutes = estimatedMinutes * (Math.random() * 0.3 + 0.6); // 60% to 90% of estimated
-    } else {
-        // Outside peak window: actual time always exceeds estimated time
-        // Make recent failures (last week) less severe than older failures to differentiate charts
-        if (daysAgo <= 7) {
-            // Last week: Exceed by 10% to 50%
-            durationMinutes = estimatedMinutes * (Math.random() * 0.4 + 1.1);
-        } else {
-            // Older tasks: Exceed by 40% to 100%
-            durationMinutes = estimatedMinutes * (Math.random() * 0.6 + 1.4);
-        }
-    }
-    durationMinutes = Math.floor(durationMinutes);
+    // 1. Define base performance by time slot. 1.0 is on-time. <1.0 is efficient, >1.0 is inefficient.
+    let baseMultiplier = 1.35; // Default: 35% over time
+    if (startHour >= 8 && startHour < 12) baseMultiplier = 1.15;   // Morning: 15% over
+    else if (startHour >= 12 && startHour < 16) baseMultiplier = 0.9; // Peak: 10% under
+    else if (startHour >= 16 && startHour < 20) baseMultiplier = 1.25; // Afternoon dip: 25% over
+    // Late night and early morning remain at 1.35
 
+    // 2. Add randomness to simulate real-world variance
+    // This will create a spread from ~ -0.3 to +0.4 around the base.
+    const randomFactor = (Math.random() - 0.45) * 0.7; 
+
+    // 3. Make older tasks slightly less efficient to show a difference in all-time vs weekly
+    const ageFactor = daysAgo > 7 ? 0.1 : 0; // Add 10% inefficiency for older tasks
+
+    const finalMultiplier = baseMultiplier + randomFactor + ageFactor;
+
+    durationMinutes = Math.max(5, Math.floor(estimatedMinutes * finalMultiplier)); // Ensure duration is at least 5 mins
 
     const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
     return {
@@ -78,34 +78,34 @@ const initialTasks: Task[] = [
     { id: '9', name: 'Grocery Shopping', date: createDate(0, 18, 0), date_type: 'date', priority: 4, estimated_time: 60, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 2 },
     { id: '10', name: 'Plan weekend trip', date: createDate(4, 23, 59), date_type: 'deadline', priority: 5, estimated_time: 75, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 1 },
 
-    // LAST WEEK (daysAgo <= 7) -> Performance is slightly worse
-    createFinishedTask(1, "Review weekly analytics", 1, 9, 0, 60, 3, 3),      // Bad
-    createFinishedTask(2, "Client check-in call", 2, 11, 0, 30, 2, 2),      // Bad
-    createFinishedTask(3, "Update Jira tickets", 3, 10, 30, 45, 4, 2),     // Bad
-    createFinishedTask(4, "Write blog post draft", 4, 13, 15, 90, 3, 4),   // Good
-    createFinishedTask(5, "Test new API endpoint", 5, 15, 0, 60, 2, 3),     // Good
-    createFinishedTask(6, "Weekly team sync", 6, 14, 0, 60, 2, 2),         // Good
-    createFinishedTask(7, "Go for a run", 7, 18, 0, 45, 5, 3),             // Bad
-    createFinishedTask(8, "Meal prep for the week", 7, 19, 0, 90, 4, 2),   // Bad
+    // LAST WEEK (daysAgo <= 7)
+    createFinishedTask(1, "Review weekly analytics", 1, 9, 0, 60, 3, 3),
+    createFinishedTask(2, "Client check-in call", 2, 11, 0, 30, 2, 2),
+    createFinishedTask(3, "Update Jira tickets", 3, 10, 30, 45, 4, 2),
+    createFinishedTask(4, "Write blog post draft", 4, 13, 15, 90, 3, 4),
+    createFinishedTask(5, "Test new API endpoint", 5, 15, 0, 60, 2, 3),
+    createFinishedTask(6, "Weekly team sync", 6, 14, 0, 60, 2, 2),
+    createFinishedTask(7, "Go for a run", 7, 18, 0, 45, 5, 3),
+    createFinishedTask(8, "Meal prep for the week", 7, 19, 0, 90, 4, 2),
 
-    // OLDER TASKS (daysAgo > 7) -> Performance is much worse outside noon
-    createFinishedTask(9, "Design new UI mockups", 8, 17, 0, 180, 1, 5),   // Bad (old)
-    createFinishedTask(10, "Code review for junior dev", 9, 16, 30, 60, 2, 3), // Bad (old)
-    createFinishedTask(11, "Book flights for conference", 10, 10, 0, 45, 4, 1),// Bad (old)
-    createFinishedTask(12, "Brainstorm campaign ideas", 11, 11, 0, 90, 3, 3),// Bad (old)
-    createFinishedTask(13, "Create user flow diagrams", 12, 12, 30, 120, 3, 4),// Good
-    createFinishedTask(14, "Fix critical bug in production", 13, 13, 0, 180, 1, 5),// Good
-    createFinishedTask(15, "Read a chapter of a book", 14, 21, 0, 30, 5, 1), // Bad (old)
-    createFinishedTask(16, "Water the plants", 15, 20, 0, 10, 5, 1),       // Bad (old)
-    createFinishedTask(17, "Respond to overdue emails", 16, 9, 30, 45, 2, 2),// Bad (old)
-    createFinishedTask(18, "Create database schema", 17, 8, 0, 120, 2, 4),  // Bad (old)
-    createFinishedTask(19, "Interview new candidate", 18, 14, 0, 60, 3, 2), // Good
-    createFinishedTask(20, "Set up new dev environment", 19, 16, 30, 120, 4, 3),// Bad (old)
-    createFinishedTask(21, "Performance review meeting", 20, 11, 0, 60, 2, 3),// Bad (old)
-    createFinishedTask(22, "Prototype a new feature", 21, 9, 30, 150, 1, 4), // Bad (old)
-    createFinishedTask(23, "Update project dependencies", 22, 10, 0, 60, 4, 2), // Bad (old)
-    createFinishedTask(24, "Write documentation", 23, 17, 0, 90, 3, 3),       // Bad (old)
-    createFinishedTask(25, "Clean the apartment", 24, 15, 0, 120, 5, 2),       // Good
+    // OLDER TASKS (daysAgo > 7)
+    createFinishedTask(9, "Design new UI mockups", 8, 17, 0, 180, 1, 5),
+    createFinishedTask(10, "Code review for junior dev", 9, 16, 30, 60, 2, 3),
+    createFinishedTask(11, "Book flights for conference", 10, 10, 0, 45, 4, 1),
+    createFinishedTask(12, "Brainstorm campaign ideas", 11, 11, 0, 90, 3, 3),
+    createFinishedTask(13, "Create user flow diagrams", 12, 12, 30, 120, 3, 4),
+    createFinishedTask(14, "Fix critical bug in production", 13, 13, 0, 180, 1, 5),
+    createFinishedTask(15, "Read a chapter of a book", 14, 21, 0, 30, 5, 1),
+    createFinishedTask(16, "Water the plants", 15, 20, 0, 10, 5, 1),
+    createFinishedTask(17, "Respond to overdue emails", 16, 9, 30, 45, 2, 2),
+    createFinishedTask(18, "Create database schema", 17, 8, 0, 120, 2, 4),
+    createFinishedTask(19, "Interview new candidate", 18, 14, 0, 60, 3, 2),
+    createFinishedTask(20, "Set up new dev environment", 19, 16, 30, 120, 4, 3),
+    createFinishedTask(21, "Performance review meeting", 20, 11, 0, 60, 2, 3),
+    createFinishedTask(22, "Prototype a new feature", 21, 9, 30, 150, 1, 4),
+    createFinishedTask(23, "Update project dependencies", 22, 10, 0, 60, 4, 2),
+    createFinishedTask(24, "Write documentation", 23, 17, 0, 90, 3, 3),
+    createFinishedTask(25, "Clean the apartment", 24, 15, 0, 120, 5, 2),
 ];
 
 
