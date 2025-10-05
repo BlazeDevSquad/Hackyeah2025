@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BrainBuddy — Pitch Deck (Print-Proof, Patched)</title>
+<title>BrainBuddy — Pitch Deck (Centered)</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
@@ -12,26 +12,31 @@
     --ink:#101225;
     --muted:#56607a;
     --stroke:#e6eaf3;
-    --a:#b33bff;      /* magenta */
-    --b:#24b2ff;      /* cyan  */
+    --a:#b33bff;
+    --b:#24b2ff;
   }
 
-  /* ====== EKRAN (te same wymiary co druk) ====== */
   html,body{height:100%; margin:0; background:#f3f5f9;}
   body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial; color:var(--ink);}
 
-  /* A4 landscape: 297mm × 210mm — identycznie w ekran/druk */
   .deck{display:grid; gap:12mm; padding:12mm; justify-content:center;}
+
   .slide{
-    width:297mm; height:210mm;                /* <— KLUCZ: mm, nie px  */
+    width:297mm; height:210mm;
     background:#fff; border:1px solid #dfe3ee; border-radius:6mm;
     box-shadow:0 2mm 6mm rgba(16,18,37,.08);
-    padding:18mm; box-sizing:border-box; overflow:hidden;
+    padding:18mm; box-sizing:border-box;
     print-color-adjust: exact; -webkit-print-color-adjust: exact;
-    display:flex; align-items:flex-start;
+
+    /* ✅ centrowanie treści w pionie i poziomie */
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
 
-  /* Typografia (czytelna, bez efektów) */
+  /* ograniczenie szerokości środka, żeby nie rozjeżdżało się na całą stronę */
+  .slide > * {max-width:260mm; width:100%;}
+
   h1,h2,h3,p{margin:0 0 5mm 0;}
   .eyebrow{font:800 3.2mm/1 Inter; letter-spacing:.18em; text-transform:uppercase; color:#6b7591;}
   .huge{font-weight:900; font-size:22mm; line-height:.95; letter-spacing:-.02em;}
@@ -42,19 +47,16 @@
   .gtext{background:linear-gradient(180deg,var(--a),var(--b)); -webkit-background-clip:text; background-clip:text; color:transparent}
   .accent{width:18mm; height:1mm; background:linear-gradient(90deg,var(--a),var(--b)); border-radius:1mm; margin:2mm 0 0}
 
-  /* Układ kolumn */
   .cols{display:grid; grid-template-columns:1.15fr .85fr; gap:12mm; width:100%;}
   .only{max-width:220mm}
   .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:6mm;}
 
-  /* Karty — bez fioletowego fill, zawsze białe i czytelne */
   .card{
     background:#fff; border:1px solid var(--stroke); border-radius:5mm; padding:8mm;
     box-shadow:0 3mm 10mm rgba(16,18,37,.06);
     break-inside: avoid;
   }
 
-  /* Lista z czytelnym punktorom */
   .list{list-style:none; padding:0; margin:0; display:grid; gap:3.2mm}
   .list li{position:relative; padding-left:8mm; color:#11152a; break-inside:avoid;}
   .list li::before{
@@ -63,7 +65,6 @@
     box-shadow:0 0 0 1mm #ffffffc5, 0 1.4mm 4mm rgba(93,80,220,.22);
   }
 
-  /* Miejsce na ilustrację (opcjonalnie) */
   .visual{
     aspect-ratio:4/3; border:1px solid var(--stroke); border-radius:6mm; overflow:hidden;
     background:linear-gradient(180deg,#f7f9ff,#fff);
@@ -73,88 +74,45 @@
 
   .pill{display:inline-block; padding:3.2mm 5mm; border-radius:999px; border:1px solid var(--stroke); background:#fff; font-weight:800; font-size:4mm}
 
-  /* ====== DRUK (PDF) ====== */
   @media print {
-    @page{
-      size: A4 landscape;    /* <— standard A4 w poziomie */
-      margin: 0;
-    }
+    @page{size: A4 landscape; margin:0;}
     html,body{background:#fff;}
     .deck{gap:0; padding:0;}
     .slide{
       width:297mm; height:210mm; border:none; border-radius:0; box-shadow:none;
-      page-break-before: always; page-break-after: always; break-after: page; break-before: page;
-      overflow:hidden; contain: layout paint; widows:1; orphans:1;
+      page-break-before:always; page-break-after:always; break-after:page; break-before:page;
+      overflow:hidden; contain:layout paint; widows:1; orphans:1;
+      align-items:center; justify-content:center;
     }
-    /* Bez łamań w środku bloków */
-    .card, .cols, .grid3, .list, .list li { break-inside: avoid; page-break-inside: avoid; }
-    /* Kolory pewne */
-    *{print-color-adjust: exact; -webkit-print-color-adjust: exact;}
+    .card, .cols, .grid3, .list, .list li { break-inside:avoid; page-break-inside:avoid; }
+    *{print-color-adjust:exact; -webkit-print-color-adjust:exact;}
   }
-
-  /* ====== (opcjonalnie) Wersja 16:9 zamiast A4 ======
-  @media print {
-    @page{ size: 1920px 1080px; margin:0; }
-  }
-  .slide{ width:1920px; height:1080px; }
-  ==================================================== */
-
 
   /* ==== ANTI-ARTIFACT PATCH ==== */
-
-  /* 1) Gradientowy tekst – bezpieczniejsze wygładzanie na ekranie */
   .gtext{
-    -webkit-text-fill-color: transparent;
-    text-rendering: geometricPrecision;
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-stroke: 0.2px rgba(0,0,0,0.01);
+    -webkit-text-fill-color:transparent;
+    text-rendering:geometricPrecision;
+    -webkit-font-smoothing:antialiased;
+    -webkit-text-stroke:0.2px rgba(0,0,0,0.01);
   }
-
-  /* 1a) W DRUKU – fallback na stały kolor (zero halo w PDF) */
   @media print{
     .gtext{
-      background: none !important;
-      color: #5f66ff !important;
-      -webkit-text-fill-color: #5f66ff !important;
-      -webkit-text-stroke: 0 !important;
+      background:none!important;
+      color:#5f66ff!important;
+      -webkit-text-fill-color:#5f66ff!important;
+      -webkit-text-stroke:0!important;
     }
   }
-
-  /* 2) Podkreślenia/akcenty – osobny blok, nie text-decoration */
   .accent, .accent-underline{
-    display:block;
-    height: 1.5mm;
-    width: 18mm;
-    background: linear-gradient(90deg, var(--a), var(--b));
-    border-radius: 1mm;
-    margin: 2mm 0 0;
-    box-shadow: 0 0 0 0.3mm #ffffff;
+    display:block; height:1.5mm; width:18mm;
+    background:linear-gradient(90deg,var(--a),var(--b));
+    border-radius:1mm; margin:2mm 0 0; box-shadow:0 0 0 0.3mm #ffffff;
   }
-  @media print{
-    .accent, .accent-underline{
-      box-shadow: none;
-    }
-  }
-
-  /* 3) Punktory – mniej cienia na ekranie, SOLID w druku */
-  .list li::before{
-    box-shadow: 0 0 0 0.8mm #ffffffc0, 0 0.8mm 2.2mm rgba(93,80,220,.16);
-  }
-  @media print{
-    .list li::before{
-      background: #6f61ff !important;
-      box-shadow: none !important;
-    }
-  }
-
-  /* 4) Karty/obrysy – bez przezroczystości w PDF */
-  @media print{
-    .card{ box-shadow:none !important; background:#fff !important; }
-    .visual{ box-shadow:none !important; background:#fff !important; }
-  }
-
-  /* 5) Wyłącz ligatury (czasem szwy na gradientach) */
-  h1, h2, .huge, .title{ font-variant-ligatures: none; }
+  @media print{.accent, .accent-underline{box-shadow:none;}}
+  .list li::before{box-shadow:0 0 0 0.8mm #ffffffc0, 0 0.8mm 2.2mm rgba(93,80,220,.16);}
+  @media print{.list li::before{background:#6f61ff!important; box-shadow:none!important;}}
+  @media print{.card{box-shadow:none!important; background:#fff!important;} .visual{box-shadow:none!important; background:#fff!important;}}
+  h1,h2,.huge,.title{font-variant-ligatures:none;}
 </style>
 </head>
 <body>
