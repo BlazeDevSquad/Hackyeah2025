@@ -203,7 +203,7 @@ If the user specifies an exact date (e.g., “on October 7,” “on Monday”, 
 
 Infer the date relative to the current date if given in natural language (e.g., “tomorrow” = current_date + 1 day).
 
-Format date as "YYYY-MM-DDThh:mm:ssZ". It must be included every single time.
+Format date as "YYYY-MM-DDThh:mm:ss". It must be included every single time.
 
 priority, required_stamina, estimated_time:
 
@@ -281,6 +281,10 @@ Your Goal
 Based on the given list and the user's available time:
 
 Choose the most suitable task the user can realistically do right now.
+
+Don't propose tasks that are already done.
+
+Don't propose tasks that have date_type "date" and date field is not today with time 10 minutes from now.
 
 If no full task fits, suggest doing a smaller portion of a high-priority task.
 
