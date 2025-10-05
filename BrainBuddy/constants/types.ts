@@ -1,7 +1,7 @@
 export interface Task {
   id?: string;
   name: string;
-  date?: string; // Using string for ISO 8601 datetime format, both deadline and date type can use this field, in case of deadline date means end of deadline
+  date?: Date; // Using string for ISO 8601 datetime format, both deadline and date type can use this field, in case of deadline date means end of deadline
   date_type: "deadline" | "date";
   created_at: Date;
   updated_at: Date;
