@@ -1,8 +1,8 @@
 import axios from "axios";
 import { GeminiTask, OperationPick, Task } from "@/constants/types";
 
-const GEMINI_API_KEY = "AIzaSyAnpya1oO7QtSp5OhccqzhNKLRJu0pvDYs";
-const GEMINI_URL =   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+const GEMINI_API_KEY = "AIzaSyB_G6VvVxMV2FvcZh_S9upx1hj21wS39YM";
+const GEMINI_URL =   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
 export async function getStringResponse(prompt: string): Promise<string> {
     const contents = [{ role: "user", parts: [{ text: prompt }] }];
