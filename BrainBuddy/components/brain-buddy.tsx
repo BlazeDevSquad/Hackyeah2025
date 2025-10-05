@@ -56,6 +56,8 @@ export default function BrainBuddy() {
             } else {
               responseText = "I couldn't come up with a suggestion right now. Please try again.";
             }
+          } else if (operationType?.operation === 'unrelated') {
+            responseText = "I couldn't figure out a task from that. Please click again and say a task you'd like to add or change.";
           } else {
             responseText = "I'm not sure what you're asking. Could you please rephrase?";
           }

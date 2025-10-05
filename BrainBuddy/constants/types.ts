@@ -23,5 +23,5 @@ export interface GeminiTask {
 }
 
 export interface OperationPick {
-  operation: "select" | "update";
+  operation: "select" | "update" | "unrelated";
 }

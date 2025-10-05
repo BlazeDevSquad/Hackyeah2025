@@ -27,7 +27,7 @@ export async function getOperationType(text: string): Promise<OperationPick | nu
     const prompt = `
 You are a classification model that determines what kind of operation the user is requesting.
 
-There are two possible operations:
+There are three possible operations:
 
 "update" → The user is adding, modifying, or managing tasks.
 
@@ -51,6 +51,16 @@ Examples:
 
 “What task should I focus on next?”
 
+"unrelated" → The user is asking about something unrelated to tasks. Something like weather, news, that doesn't fit into any of the other categories.
+
+Examples:
+
+“What is the weather in Tokyo?”
+
+“What's the latest news?”
+
+"How to make a cake?”
+
 Your task:
 
 Based only on the meaning of the user's message, choose which operation fits best.
@@ -62,11 +72,16 @@ or
 {
   "operation": "update"
 }
+{
+  "operation": "unrelated"
+}
 Additional rules:
 
 If the user mentions adding, changing, completing, or planning a task → "update"
 
 If the user asks for a recommendation or what to do now → "select"
+
+If the user asks about something unrelated to tasks → "unrelated"
 
 Never include extra text or explanations — return only valid JSON.
 
@@ -97,7 +112,10 @@ User input: "${text}"
             const cleanedResponse = rawResponse.replace(/```json|```/g, '').trim();
             const parsedJson = JSON.parse(cleanedResponse);
 
-            if (parsedJson.operation && (parsedJson.operation === 'select' || parsedJson.operation === 'update')) {
+            if (
+                parsedJson.operation &&
+                (parsedJson.operation === 'select' || parsedJson.operation === 'update' || parsedJson.operation === 'unrelated')
+            ) {
                 return parsedJson as OperationPick;
             } else {
                 console.warn(`Attempt ${4 - retries}: Validation failed for operation pick response: ${cleanedResponse}. Retrying.`);
