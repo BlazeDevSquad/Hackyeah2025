@@ -19,7 +19,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const priorityMap = {
+export const priorityMap = {
   1: { label: 'Insane', color: '#ef4444' },
   2: { label: 'High', color: '#f97316' },
   3: { label: 'Medium', color: '#daf63bff' },

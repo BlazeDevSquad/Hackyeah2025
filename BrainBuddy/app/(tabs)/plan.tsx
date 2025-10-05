@@ -4,7 +4,9 @@ import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import {Calendar, EventRenderer, type ICalendarEventBase} from "react-native-big-calendar";
 import {addMinutes} from "date-fns";
 import {useFocusEffect} from "@react-navigation/native";
-import {mockTasks, priorityMap} from "@/app/(tabs)/tasks";
+import {priorityMap} from "@/app/(tabs)/tasks";
+import {useTasks} from "@/providers/tasks";
+import {Task} from "@/constants/types";
 
 
 const priorityColors: Record<number, string> = {
@@ -55,11 +57,13 @@ const formatTime = (d: Date) => `${two(d.getHours())}:${two(d.getMinutes())}`;
 const formatTimeRange = (s: Date, e: Date) => `${formatTime(s)} – ${formatTime(e)}`;
 const priorityLabel = (p?: 1 | 2 | 3 | 4 | 5) => (priorityMap as any)?.[p!]?.label ?? `P${p ?? 3}`;
 
-function tasksToEventsAll(): CalEvent[] {
-    return mockTasks
+
+function tasksToEventsAll(tasks: Task[]): CalEvent[] {
+
+    return tasks
         .filter((t) => !!t.date)
         .map((t) => {
-            const start = toLocalWallTime(t.date!); // <-- KLUCZOWA ZMIANA
+            const start = toLocalWallTime(t.date!);
 
             const color =
                 (priorityMap as any)?.[t.priority]?.color ??
@@ -93,6 +97,8 @@ export default function PlanScreen() {
     const [draftStart, setDraftStart] = useState<Date | null>(null);
     const [title, setTitle] = useState("");
     const [duration, setDuration] = useState("60");
+    const {tasks, addTask, modifyTask} = useTasks();
+
 
     const [calKey, setCalKey] = useState(0);
 
@@ -106,7 +112,7 @@ export default function PlanScreen() {
     const [selectedEvent, setSelectedEvent] = useState<CalEvent | null>(null);
 
     const dayTaskEvents = useMemo(() => {
-        const evs = tasksToEventsAll();
+        const evs = tasksToEventsAll(tasks);
         evs.forEach(e => {
             console.log(
                 "[CAL_EV]",
@@ -197,17 +203,23 @@ export default function PlanScreen() {
         setModalVisible(false);
     };
 
-
     const renderEvent: EventRenderer<CalEvent> = (event, touchableOpacityProps) => {
-        const bg =
-            (priorityMap as any)?.[event.priority!]?.color ?? "#3b82f6";
+        const bg = (priorityMap as any)?.[event.priority!]?.color ?? "#3b82f6";
+
+        // ⬇️ wyciągamy key i style, resztę propsów rozlewamy
+        const {key: itemKey, style, ...rest} = (touchableOpacityProps ?? {}) as {
+            key?: string | number;
+            style?: any;
+            [k: string]: any;
+        };
 
         return (
             <TouchableOpacity
+                key={itemKey}
                 activeOpacity={0.8}
-                {...touchableOpacityProps}
+                {...rest}
                 style={[
-                    touchableOpacityProps?.style,
+                    style,
                     {backgroundColor: bg, borderRadius: 12, paddingHorizontal: 12, justifyContent: "center"},
                 ]}
             >
