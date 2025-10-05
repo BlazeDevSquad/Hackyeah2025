@@ -1,6 +1,34 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Task } from '@/constants/types';
+import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
+import {Platform} from 'react-native';
+import * as Notifications from 'expo-notifications';
+import {Task} from '@/constants/types';
 
+/** ---- Notification handler: foreground alert ---- */
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowBanner: true,
+        shouldShowList: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+    }),
+});
+
+async function notify(title: string, body: string, data?: Record<string, any>) {
+    const content = {title, body, data};
+
+    await Notifications.scheduleNotificationAsync({content, trigger: null});
+
+}
+
+/** ---- Helpers ---- */
+function fmtDate(d?: string | Date) {
+    if (!d) return '';
+    const date = d instanceof Date ? d : new Date(d);
+    return date.toLocaleString();
+}
+
+
+/** ---- Mock data ---- */
 const createDate = (days: number, hours?: number, minutes?: number) => {
     const date = new Date();
     date.setDate(date.getDate() + days);
@@ -117,11 +145,12 @@ const initialTasks: Task[] = [
 ];
 
 
+/** ---- Context ---- */
 type TasksContextType = {
     tasks: Task[];
     getAllTasks: () => Task[];
-    addTask: (task: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => void;
-    modifyTask: (updatedTask: Task) => void;
+    addTask: (task: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+    modifyTask: (updatedTask: Task) => Promise<void>;
 };
 
 const TasksContext = createContext<TasksContextType | null>(null);
@@ -133,40 +162,81 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         setTasks(initialTasks);
     }, []);
 
-    const getAllTasks = (): Task[] => {
-        return tasks;
-    };
+    // Permissions + Android channel
+    useEffect(() => {
+        (async () => {
+            if (Platform.OS === 'ios') {
+                const {status: existing} = await Notifications.getPermissionsAsync();
+                if (existing !== 'granted') {
+                    await Notifications.requestPermissionsAsync({
+                        ios: {allowAlert: true, allowBadge: true, allowSound: true},
+                    });
+                }
+            }
+            if (Platform.OS === 'android') {
+                await Notifications.setNotificationChannelAsync('default', {
+                    name: 'Default',
+                    importance: Notifications.AndroidImportance.DEFAULT,
+                });
+            }
+        })();
+    }, []);
 
-    const addTask = (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
+    const getAllTasks = (): Task[] => tasks;
+
+    const addTask: TasksContextType['addTask'] = async (taskData) => {
         const newTask: Task = {
-            id: new Date().toISOString() + Math.random(), // Simple unique ID for sketch
+            id: new Date().toISOString() + Math.random(),
             ...taskData,
             created_at: new Date(),
             updated_at: new Date(),
         };
-        setTasks(prevTasks => [...prevTasks, newTask]);
+
+        setTasks(prev => [...prev, newTask]);
+
+        const title =
+            newTask.date_type === 'deadline' ? 'New deadline added' : 'New task added';
+        const body = newTask.date ? `${newTask.name} at ${fmtDate(newTask.date)}` : newTask.name;
+
+        try {
+            await notify(title, body, {taskId: newTask.id, priority: newTask.priority});
+        } catch (e) {
+            console.warn('[Notifications] Failed to notify (add):', e);
+        }
     };
 
-    const modifyTask = (updatedTask: Task) => {
+    const modifyTask: TasksContextType['modifyTask'] = async (updatedTask) => {
+        const prev = tasks.find(t => t.id === updatedTask.id);
+
         setTasks(prevTasks =>
             prevTasks.map(task =>
                 task.id === updatedTask.id ? { ...updatedTask, updated_at: new Date() } : task
             )
         );
+
+        const changes: string[] = [];
+        if (prev) {
+            if (prev.name !== updatedTask.name) changes.push(`name → "${updatedTask.name}"`);
+            if (prev.date !== updatedTask.date) changes.push(`time → ${fmtDate(updatedTask.date)}`);
+            if (prev.priority !== updatedTask.priority) changes.push(`priority → P${updatedTask.priority ?? '-'}`);
+            if (prev.status !== updatedTask.status) changes.push(`status → ${updatedTask.status}`);
+            if (prev.estimated_time !== updatedTask.estimated_time) changes.push(`duration → ${updatedTask.estimated_time} min`);
+        }
+
+        const title = 'Task updated';
+        const body =
+            changes.length > 0 ? `${updatedTask.name}: ${changes.join(', ')}` : `${updatedTask.name} updated`;
+
+        try {
+            await notify(title, body, {taskId: updatedTask.id, priority: updatedTask.priority});
+        } catch (e) {
+            console.warn('[Notifications] Failed to notify (update):', e);
+        }
     };
 
-    const value = {
-        tasks,
-        getAllTasks,
-        addTask,
-        modifyTask,
-    };
+    const value: TasksContextType = {tasks, getAllTasks, addTask, modifyTask};
 
-    return (
-        <TasksContext.Provider value={value}>
-            {children}
-        </TasksContext.Provider>
-    );
+    return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;
 }
 
 export function useTasks() {

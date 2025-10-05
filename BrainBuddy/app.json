@@ -10,6 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
+      "icon": "./assets/images/brainLogoQuality.png",
       "bundleIdentifier": "com.verscup.brainbuddyblaze",
       "infoPlist": {
         "NSSpeechRecognitionUsageDescription": "Allow $(PRODUCT_NAME) to recognize speech.",
@@ -18,6 +19,7 @@
       }
     },
     "android": {
+      "icon": "./assets/images/brainLogoQuality.png",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
