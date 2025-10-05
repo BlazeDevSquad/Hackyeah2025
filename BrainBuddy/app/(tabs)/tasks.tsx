@@ -14,22 +14,21 @@ import {Task} from '@/constants/types';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import {useTasks} from '@/providers/tasks';
 
-// Enable LayoutAnimation for Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 export const priorityMap: Record<number, { label: string; color: string }> = {
-  1: { label: 'Insane', color: '#ef4444' }, // Red
-  2: { label: 'High', color: '#f97316' },   // Orange
-  3: { label: 'Medium', color: '#eab308' },// Yellow
-  4: { label: 'Easy', color: '#3b82f6' },   // Blue
-  5: { label: 'No effort', color: '#10b981' }, // Green
+  1: { label: 'Insane', color: '#ef4444' },
+  2: { label: 'High', color: '#f97316' },
+  3: { label: 'Medium', color: '#eab308' },
+  4: { label: 'Easy', color: '#3b82f6' },
+  5: { label: 'No effort', color: '#10b981' },
 };
 
 export default function TasksScreen() {
   const { colors } = useThemedStyles();
-  const { tasks } = useTasks(); // Use tasks from the global context
+  const { tasks } = useTasks();
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
 
   const { deadlineTasks, datedTasks } = useMemo(() => {

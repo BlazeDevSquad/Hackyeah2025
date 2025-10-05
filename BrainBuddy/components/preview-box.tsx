@@ -11,7 +11,6 @@ type Props = {
 export const PreviewBox = ({ transcript, partialTranscript }: Props) => {
   const { colors } = useThemedStyles();
 
-  // Don't render the component if there is no text to show
   if (!transcript && !partialTranscript) {
     return null;
   }
@@ -28,7 +27,6 @@ export const PreviewBox = ({ transcript, partialTranscript }: Props) => {
     >
       <Text style={[styles.previewText, { color: colors.text }]}>
         {transcript}
-        {/* Render partial transcript in a different color */}
         {partialTranscript ? (
           <Text style={{ color: colors.subtext }}> {partialTranscript}</Text>
         ) : null}

@@ -3,7 +3,6 @@ import {Platform} from 'react-native';
 import * as Notifications from 'expo-notifications';
 import {Task} from '@/constants/types';
 
-/** ---- Notification handler: foreground alert ---- */
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowBanner: true,
@@ -20,15 +19,12 @@ async function notify(title: string, body: string, data?: Record<string, any>) {
 
 }
 
-/** ---- Helpers ---- */
 function fmtDate(d?: string | Date) {
     if (!d) return '';
     const date = d instanceof Date ? d : new Date(d);
     return date.toLocaleString();
 }
 
-
-/** ---- Mock data ---- */
 const createDate = (days: number, hours?: number, minutes?: number) => {
     const date = new Date();
     date.setDate(date.getDate() + days);
@@ -58,23 +54,15 @@ const createFinishedTask = (
     
     let durationMinutes;
     
-    // 1. Define base performance by time slot. 1.0 is on-time. <1.0 is efficient, >1.0 is inefficient.
-    let baseMultiplier = 1.35; // Default: 35% over time
-    if (startHour >= 8 && startHour < 12) baseMultiplier = 1.15;   // Morning: 15% over
-    else if (startHour >= 12 && startHour < 16) baseMultiplier = 0.9; // Peak: 10% under
-    else if (startHour >= 16 && startHour < 20) baseMultiplier = 1.25; // Afternoon dip: 25% over
-    // Late night and early morning remain at 1.35
+    let baseMultiplier = 1.35;
+    if (startHour >= 8 && startHour < 12) baseMultiplier = 1.15;
+    else if (startHour >= 12 && startHour < 16) baseMultiplier = 0.9;
+    else if (startHour >= 16 && startHour < 20) baseMultiplier = 1.25;
 
-    // 2. Add randomness to simulate real-world variance
-    // This will create a spread from ~ -0.3 to +0.4 around the base.
     const randomFactor = (Math.random() - 0.45) * 0.7; 
-
-    // 3. Make older tasks slightly less efficient to show a difference in all-time vs weekly
-    const ageFactor = daysAgo > 7 ? 0.1 : 0; // Add 10% inefficiency for older tasks
-
+    const ageFactor = daysAgo > 7 ? 0.1 : 0;
     const finalMultiplier = baseMultiplier + randomFactor + ageFactor;
-
-    durationMinutes = Math.max(5, Math.floor(estimatedMinutes * finalMultiplier)); // Ensure duration is at least 5 mins
+    durationMinutes = Math.max(5, Math.floor(estimatedMinutes * finalMultiplier));
 
     const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
     return {
@@ -82,7 +70,7 @@ const createFinishedTask = (
         name,
         date: endDate,
         date_type: 'date',
-        created_at: new Date(startDate.getTime() - Math.random() * 1000 * 60 * 60 * 24 * 2), // Created sometime before
+        created_at: new Date(startDate.getTime() - Math.random() * 1000 * 60 * 60 * 24 * 2),
         updated_at: endDate,
         started_at: startDate,
         finished_at: endDate,
@@ -94,7 +82,6 @@ const createFinishedTask = (
 };
 
 const initialTasks: Task[] = [
-    // Existing & New Planned Tasks
     { id: '1', name: 'Finalize Q4 report', date: createDate(10, 23, 59), date_type: 'deadline', priority: 1, estimated_time: 180, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 5 },
     { id: '2', name: 'Submit project proposal', date: createDate(5, 17, 0), date_type: 'deadline', priority: 2, estimated_time: 120, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 4 },
     { id: '3', name: 'Buy birthday gift for Alex', date: createDate(3, 23, 59), date_type: 'deadline', priority: 3, estimated_time: 45, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 1 },
@@ -106,7 +93,6 @@ const initialTasks: Task[] = [
     { id: '9', name: 'Grocery Shopping', date: createDate(0, 18, 0), date_type: 'date', priority: 4, estimated_time: 60, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 2 },
     { id: '10', name: 'Plan weekend trip', date: createDate(4, 23, 59), date_type: 'deadline', priority: 5, estimated_time: 75, status: 'planned', created_at: new Date(), updated_at: new Date(), required_stamina: 1 },
 
-    // LAST WEEK (daysAgo <= 7)
     createFinishedTask(1, "Review weekly analytics", 1, 9, 0, 60, 3, 3),
     createFinishedTask(2, "Client check-in call", 2, 11, 0, 30, 2, 2),
     createFinishedTask(3, "Update Jira tickets", 3, 10, 30, 45, 4, 2),
@@ -116,7 +102,6 @@ const initialTasks: Task[] = [
     createFinishedTask(7, "Go for a run", 7, 18, 0, 45, 5, 3),
     createFinishedTask(8, "Meal prep for the week", 7, 19, 0, 90, 4, 2),
 
-    // OLDER TASKS (daysAgo > 7)
     createFinishedTask(9, "Design new UI mockups", 8, 17, 0, 180, 1, 5),
     createFinishedTask(10, "Code review for junior dev", 9, 16, 30, 60, 2, 3),
     createFinishedTask(11, "Book flights for conference", 10, 10, 0, 45, 4, 1),
@@ -137,7 +122,6 @@ const initialTasks: Task[] = [
 ];
 
 
-/** ---- Context ---- */
 type TasksContextType = {
     tasks: Task[];
     getAllTasks: () => Task[];
@@ -151,23 +135,20 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     const [tasks, setTasks] = useState<Task[]>([]);
 
     useEffect(() => {
-        // Add more tasks to ensure both pie charts have data
         const fullTaskList = [...initialTasks];
-        // To make sure we have enough data for "all time"
         for (let i = 0; i < 30; i++) {
              fullTaskList.push(createFinishedTask(
                 100 + i, `Old Task ${i}`, 
-                8 + Math.floor(i/2), // days ago (8 to 22)
-                8 + (i % 12), // hour (8 to 19)
-                (i * 15) % 60, // minute
-                30 + (i * 5), // estimated time
+                8 + Math.floor(i/2),
+                8 + (i % 12),
+                (i * 15) % 60,
+                30 + (i * 5),
                 (i % 5) + 1 as any, 
                 (i % 5) + 1 as any));
         }
         setTasks(fullTaskList);
     }, []);
 
-    // Permissions + Android channel
     useEffect(() => {
         (async () => {
             if (Platform.OS === 'ios') {
