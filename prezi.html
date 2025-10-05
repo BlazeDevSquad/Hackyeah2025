@@ -35,8 +35,8 @@
 
   .deck {
     display: grid;
-    gap: 12mm;
-    padding: 12mm;
+    gap: 10mm;
+    padding: 10mm;
     justify-content: center;
   }
 
@@ -47,7 +47,7 @@
     border: 1px solid var(--stroke);
     border-radius: 6mm;
     box-shadow: 0 2mm 6mm rgba(16, 18, 37, .08);
-    padding: 18mm;
+    padding: 15mm;
     box-sizing: border-box;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
@@ -63,11 +63,11 @@
   }
 
   h1, h2, h3, p, ul { margin: 0 0 5mm 0; }
-  h1 { font-weight: 900; font-size: 18mm; line-height: 1; letter-spacing: -.02em; }
-  h2 { font-weight: 800; font-size: 12mm; line-height: 1.1; letter-spacing: -.01em; margin-bottom: 8mm; }
-  h3 { font-weight: 700; font-size: 7mm; line-height: 1.2; margin-bottom: 4mm; }
-  p { font-size: 5mm; line-height: 1.6; }
-  .lead { font-size: 6mm; line-height: 1.5; color: var(--muted); max-width: 180mm; }
+  h1 { font-weight: 900; font-size: 16mm; line-height: 1; letter-spacing: -.02em; }
+  h2 { font-weight: 800; font-size: 10mm; line-height: 1.1; letter-spacing: -.01em; margin-bottom: 8mm; }
+  h3 { font-weight: 700; font-size: 6.5mm; line-height: 1.2; margin-bottom: 4mm; }
+  p { font-size: 4.8mm; line-height: 1.6; }
+  .lead { font-size: 5.2mm; line-height: 1.5; color: var(--muted); max-width: 180mm; }
 
   .gtext {
     background: var(--gradient);
@@ -85,20 +85,20 @@
     margin: 4mm 0 6mm;
   }
 
-  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12mm; align-items: center; width: 100%; }
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
-  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6mm; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; align-items: center; width: 100%; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; }
 
   .card {
     background: var(--light-bg);
     border: 1px solid var(--stroke);
     border-radius: 5mm;
-    padding: 8mm;
+    padding: 7mm;
     box-shadow: 0 3mm 10mm rgba(16, 18, 37, .06);
     break-inside: avoid;
   }
   .card p, .card li { font-size: 4.2mm; line-height: 1.5; }
-  .card h4 { font-size: 5.5mm; margin: 0 0 3mm; }
+  .card h4 { font-size: 5mm; margin: 0 0 3mm; }
   
   .card.problem { background: #fee2e2; border-color: var(--danger); }
   .card.solution { background: #dcfce7; border-color: var(--success); }
@@ -111,12 +111,12 @@
     padding: 8mm;
     text-align: center;
   }
-  .stat-number { font-size: 12mm; font-weight: 900; color: var(--primary); margin-bottom: 2mm; }
+  .stat-number { font-size: 10mm; font-weight: 900; color: var(--primary); margin-bottom: 2mm; }
   .stat-label { font-size: 4.5mm; color: var(--muted); font-weight: 600; }
   .stat-card p { font-size: 4mm; margin-top: 3mm; }
   
   .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 4mm; }
-  .list li { position: relative; padding-left: 8mm; color: #11152a; break-inside: avoid; font-size: 5mm; line-height: 1.5; }
+  .list li { position: relative; padding-left: 8mm; color: #11152a; break-inside: avoid; font-size: 4.8mm; line-height: 1.5; }
   .list li::before {
     content: ""; position: absolute; left: 0; top: 0.5em; width: 4.6mm; height: 4.6mm; border-radius: 50%;
     background: var(--gradient);
@@ -124,28 +124,14 @@
   
   .visual-circle {
     background: var(--gradient);
-    width: 80mm;
-    height: 80mm;
+    width: 75mm;
+    height: 75mm;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-    font-size: 40mm;
-  }
-  
-  .bar-chart {
-      width: 100%; height: 80mm; position: relative; margin: 8mm 0;
-      border-bottom: 1px solid var(--stroke);
-  }
-  .bar {
-    position: absolute; bottom: 0; border-radius: 2mm 2mm 0 0;
-    display: flex; align-items: flex-end; justify-content: center;
-    padding-bottom: 3mm; color: white; font-weight: 700; font-size: 5mm;
-  }
-  .bar-label {
-    position: absolute; bottom: -8mm; left: 50%; transform: translateX(-50%);
-    font-size: 4mm; color: var(--muted); white-space: nowrap;
+    font-size: 38mm;
   }
 
   @media print {
@@ -186,7 +172,7 @@
         </p>
          <div style="margin-top:8mm; padding:4mm; background:var(--light-bg); border-radius:3mm; border:1px solid var(--stroke);">
           <p style="font-size:4.5mm; margin:0; font-weight: 600;">
-            🔗 Try it now: brainbuddy.ai
+            🔗 Try it now: brain-buddy.framer.website
           </p>
         </div>
       </div>
@@ -216,7 +202,7 @@
         </div>
       </div>
 
-      <div style="margin-top:12mm;">
+      <div style="margin-top:10mm;">
         <h3 style="text-align:center;">Core Executive Function Deficits:</h3>
         <div class="grid2" style="margin-top: 6mm;">
           <div class="card problem">
@@ -287,14 +273,14 @@
             </div>
             <div>
                 <div class="card problem" style="text-align:center;">
-                    <h3 style="font-size:8mm;">Cost Reality:</h3>
-                    <p style="font-size:12mm; font-weight:900; color:var(--danger); margin:4mm 0;">$40-80K/year</p>
-                    <p style="font-size:5mm;">Most people can't afford this</p>
+                    <h3 style="font-size:7mm;">Cost Reality:</h3>
+                    <p style="font-size:9mm; font-weight:900; color:var(--danger); margin:4mm 0;">$40-80K/year</p>
+                    <p style="font-size:4.5mm;">Most people can't afford this</p>
                 </div>
                 <div class="card solution" style="text-align:center; margin-top:8mm;">
-                    <h3 style="font-size:8mm;">Enter BrainBuddy:</h3>
-                    <p style="font-size:12mm; font-weight:900; color:var(--success); margin:4mm 0;">$19/month</p>
-                    <p style="font-size:5mm;">AI Executive Assistant for everyone</p>
+                    <h3 style="font-size:7mm;">Enter BrainBuddy:</h3>
+                    <p style="font-size:9mm; font-weight:900; color:var(--success); margin:4mm 0;">$19/month</p>
+                    <p style="font-size:4.5mm;">AI Executive Assistant for everyone</p>
                 </div>
             </div>
         </div>
@@ -322,7 +308,7 @@
           <p>Daily summaries reveal your patterns: when you're most productive, task duration accuracy, and personalized optimization tips.</p>
         </div>
       </div>
-      <div class="card highlight" style="margin-top:12mm; text-align:center;">
+      <div class="card highlight" style="margin-top:10mm; text-align:center;">
         <h3>The Magic Formula:</h3>
         <p style="font-size: 5mm; font-weight: 600;">
           Voice Input + AI Planning + Dynamic Adaptation + Learning System =
@@ -334,9 +320,8 @@
   
   <section class="slide">
     <div>
-        <h2 style="text-align:center;">What Makes BrainBuddy <span class="gtext">Revolutionary</span></h2>
-        <h3 style="margin-top: 10mm;">Real-World Scenarios:</h3>
-        <div class="grid2" style="margin-top:6mm;">
+        <h2 style="text-align:center;">Real-World <span class="gtext">Scenarios</span></h2>
+        <div class="grid2" style="margin-top:10mm;">
             <div class="card solution">
                 <h4>📚 The 20-Minute Gap Problem</h4>
                 <p><strong>Before:</strong> Waste it scrolling, paralyzed by choice<br/>
@@ -367,54 +352,21 @@
   </section>
 
   <section class="slide">
-      <div style="width:100%;">
-        <h2 style="text-align:center;">Business Model: <span class="gtext">Accessible Cognitive Enhancement</span></h2>
-        <div class="cols" style="margin-top:10mm;">
-            <div>
-                <h3>Subscription Tiers:</h3>
-                <div class="grid3" style="gap:4mm; grid-template-columns: 1fr 1.1fr 1fr; align-items: start;">
-                    <div class="card">
-                        <h4 style="color:var(--muted)">Free Tier</h4>
-                        <ul style="padding:0; list-style-type: none; font-size:4mm;">
-                            <li>• 5 voice inputs/day</li>
-                            <li>• Basic planning</li>
-                            <li>• Manual adjustments</li>
-                        </ul>
-                    </div>
-                    <div class="card highlight">
-                        <h4 class="gtext">Pro - €19/month</h4>
-                        <ul style="padding:0; list-style-type: none; font-size:4mm;">
-                            <li>• Unlimited voice planning</li>
-                            <li>• "What now?" oracle</li>
-                            <li>• Dynamic rescheduling</li>
-                            <li>• Performance analytics</li>
-                            <li>• Calendar integrations</li>
-                        </ul>
-                    </div>
-                    <div class="card">
-                        <h4 style="color:var(--muted)">Team - €39/user</h4>
-                        <ul style="padding:0; list-style-type: none; font-size:4mm;">
-                            <li>• Everything in Pro</li>
-                            <li>• Team coordination</li>
-                            <li>• Shared focus windows</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <h3>Unit Economics:</h3>
-                <div class="bar-chart">
-                    <div class="bar" style="left:5%; width:15%; height:30%; background: var(--gradient);"><span class="bar-label">AI Costs (€3)</span></div>
-                    <div class="bar" style="left:25%; width:15%; height:15%; background: var(--gradient);"><span class="bar-label">Infrastructure (€1.5)</span></div>
-                    <div class="bar" style="left:45%; width:15%; height:20%; background: var(--gradient);"><span class="bar-label">Development (€2)</span></div>
-                    <div class="bar" style="left:65%; width:25%; height:65%; background: var(--gradient-green);"><span class="bar-label">Gross Margin (€12.5)</span></div>
-                </div>
-                <div class="card solution" style="margin-top:12mm;">
-                    <h4>Target Metrics:</h4>
-                    <p>• <strong>CAC:</strong> €25 (influencer partnerships)<br/>
-                       • <strong>LTV:</strong> €380 (20-month avg retention)<br/>
-                       • <strong>Gross Margin:</strong> 65%</p>
-                </div>
+    <div style="width:100%; text-align:center;">
+        <h2 style="text-align:center;">A Simple, Accessible Price</h2>
+        <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 10mm;">
+            <div class="card highlight" style="width: 140mm; padding: 12mm; text-align: center;">
+                <h4 class="gtext" style="font-size: 9mm; margin-top: 8mm;">BrainBuddy Pro</h4>
+                <p style="font-size: 18mm; font-weight: 900; margin: 8mm 0; color: var(--ink);">€19<span style="font-size: 8mm; font-weight: 600; color: var(--muted);"> / month</span></p>
+                <p style="margin-bottom: 10mm; font-size: 4.8mm; max-width: 100mm; margin-left: auto; margin-right:auto;">
+                    Your personal AI executive assistant for less than a coffee a day.
+                </p>
+                <ul style="padding:0; list-style-type: none; font-size:4.8mm; text-align: left; display: inline-block; gap: 4mm; display: grid;">
+                    <li>✅ Unlimited voice planning & rescheduling</li>
+                    <li>✅ "What now?" oracle for decision paralysis</li>
+                    <li>✅ Performance & energy pattern analytics</li>
+                    <li>✅ All calendar & future integrations</li>
+                </ul>
             </div>
         </div>
     </div>
@@ -422,7 +374,7 @@
 
   <section class="slide">
     <div>
-        <h2 style="text-align:center;">Development Roadmap: From <span class="gtext">Hackathon to Scale</span></h2>
+        <h2 style="text-align:center;">Roadmap: From <span class="gtext">Hackathon to Scale</span></h2>
         <div class="cols" style="margin-top:10mm; align-items:flex-start;">
             <div>
                 <h3>✅ Hackathon Achievement (48h):</h3>
@@ -441,12 +393,6 @@
                     <div class="card"><strong>Q4 2026: Complex Goals</strong><br/>"Get fit in 3 months" → Weekly micro-goals.</div>
                 </div>
             </div>
-        </div>
-        <div class="card" style="margin-top:10mm; text-align:center;">
-          <div class="cols">
-              <div><strong>Current (MVP):</strong> GPT-4 Voice, React Native, Firebase, Google Calendar API</div>
-              <div><strong>Future:</strong> Llama 3 (local), TensorFlow Lite, WebRTC, HealthKit/Google Fit</div>
-          </div>
         </div>
     </div>
   </section>
@@ -475,9 +421,9 @@
   <section class="slide">
       <div class="cols">
         <div>
-            <h1>The Ask: Join Us in <span class="gtext">Augmenting Cognition</span></h1>
+            <h1>Join Us in <span class="gtext">Augmenting Cognition</span></h1>
             <div class="accent"></div>
-            <p class="lead" style="font-size:7mm;">We are seeking <span class="gtext" style="font-weight:700;">€1,000,000</span> in seed funding to scale our team, accelerate development, and capture the market.</p>
+            <p class="lead" style="font-size:6mm;">We are seeking <span class="gtext" style="font-weight:700;">€1,000,000</span> in seed funding to scale our team, accelerate development, and capture the market.</p>
             <div style="margin-top: 10mm;">
               <h3>Allocation of Funds:</h3>
               <ul class="list">
@@ -490,12 +436,8 @@
         <div style="text-align:center;">
             <div class="card highlight">
                 <h2>Let's Talk</h2>
-                <p style="font-size: 6mm; margin-top:4mm;">
-                    <strong>CEO & Founder</strong><br/>
-                    <a href="mailto:ceo@brainbuddy.ai" style="color:var(--primary); text-decoration:none;">ceo@brainbuddy.ai</a>
-                </p>
                 <p style="font-size: 8mm; font-weight: 800; margin-top:8mm;">
-                    <a href="https://brainbuddy.ai" style="color:var(--ink); text-decoration:none;">brainbuddy.ai</a>
+                    <a href="https://brain-buddy.framer.website/" style="color:var(--ink); text-decoration:none;">brain-buddy.ai</a>
                 </p>
             </div>
             <p style="margin-top:8mm; font-size:5mm; color: var(--muted);">Together, we can build the future of personalized cognitive enhancement.</p>
