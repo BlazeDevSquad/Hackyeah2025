@@ -69,9 +69,9 @@ export default function HomeScreen() {
         const weeklyTasks = doneTasks.filter(t => new Date(t.finished_at!) > lastWeek);
 
         const timeSlots = {
-            '12-4A': { total: 0, exceeded: 0 }, '4-8A': { total: 0, exceeded: 0 },
-            '8-12P': { total: 0, exceeded: 0 }, '12-4P': { total: 0, exceeded: 0 },
-            '4-8P': { total: 0, exceeded: 0 }, '8-12A': { total: 0, exceeded: 0 },
+            '0-4': { total: 0, exceeded: 0 }, '4-8': { total: 0, exceeded: 0 },
+            '8-12': { total: 0, exceeded: 0 }, '12-16': { total: 0, exceeded: 0 },
+            '16-20': { total: 0, exceeded: 0 }, '20-24': { total: 0, exceeded: 0 },
         };
 
         doneTasks.forEach(task => {
@@ -79,12 +79,12 @@ export default function HomeScreen() {
             const actual = (new Date(task.finished_at!).getTime() - new Date(task.started_at!).getTime()) / (1000 * 60);
             
             let slot: keyof typeof timeSlots | null = null;
-            if (hour < 4) slot = '12-4A';
-            else if (hour < 8) slot = '4-8A';
-            else if (hour < 12) slot = '8-12P';
-            else if (hour < 16) slot = '12-4P';
-            else if (hour < 20) slot = '4-8P';
-            else slot = '8-12A';
+            if (hour < 4) slot = '0-4';
+            else if (hour < 8) slot = '4-8';
+            else if (hour < 12) slot = '8-12';
+            else if (hour < 16) slot = '12-16';
+            else if (hour < 20) slot = '16-20';
+            else slot = '20-24';
 
             if (slot) {
                 timeSlots[slot].total++;
@@ -150,17 +150,17 @@ export default function HomeScreen() {
                 </View>
 
                 <Text style={[styles.subtitle, { color: colors.subtext }]}>Productivity (% Over Estimate)</Text>
-                <View style={[styles.bigCard, { backgroundColor: colors.card, paddingRight: 24, paddingBottom: 24 }]}>
+                <View style={[styles.bigCard, { backgroundColor: colors.card, paddingRight: 24, paddingBottom: 24, paddingHorizontal: 12 }]}>
                    {timeOfDayPerformance.datasets[0].data.some(v => v > 0) ? (
                     <BarChart
                         data={timeOfDayPerformance}
                         width={screenWidth - 60}
-                        height={240}
+                        height={280}
                         chartConfig={chartConfig}
                         yAxisSuffix="%"
                         fromZero
                         showValuesOnTopOfBars
-                        verticalLabelRotation={60}
+                        verticalLabelRotation={70}
                     />
                     ) : <Text style={{ color: colors.subtext }}>No data for time of day performance.</Text>}
                 </View>
