@@ -4,18 +4,14 @@ import {Animated, Easing} from 'react-native';
 
 export const useSpeechRecognition = () => {
   const [isRecording, setIsRecording] = useState(false);
-  // Holds the confirmed, final parts of the transcript
   const [transcript, setTranscript] = useState('');
-  // Holds the live, in-progress part of the transcript
   const [partialTranscript, setPartialTranscript] = useState('');
 
-  // Use a ref to store the latest full transcript to avoid state update delays on stop.
   const transcriptRef = useRef('');
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  // Pulsating animation for the recording button
   useEffect(() => {
     let animation: Animated.CompositeAnimation | null = null;
     if (isRecording) {
@@ -42,7 +38,6 @@ export const useSpeechRecognition = () => {
     return () => animation?.stop();
   }, [isRecording]);
 
-  // Automatic 60-second recording timer
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isRecording) {
@@ -54,17 +49,16 @@ export const useSpeechRecognition = () => {
     return () => clearTimeout(timer);
   }, [isRecording]);
 
-  // --- CORE FIX IS HERE ---
-  useSpeechRecognitionEvent('result', (e) => {
+ useSpeechRecognitionEvent('result', (e) => {
     if (!e.results?.length) return;
 
-    // Correctly build the transcript by combining all final segments
+    const allTranscripts = e.results.map(result => result.transcript).join(' ');
+    
     const finalTranscript = e.results
       .filter(result => result.isFinal)
       .map(result => result.transcript)
       .join(' ');
       
-    // Find the latest non-final segment for the partial transcript
     const partialTranscript = e.results
       .filter(result => !result.isFinal)
       .map(result => result.transcript)
@@ -73,8 +67,7 @@ export const useSpeechRecognition = () => {
     setTranscript(finalTranscript);
     setPartialTranscript(partialTranscript);
 
-    // Update the ref with the combined result for immediate access on stop
-    transcriptRef.current = (finalTranscript + ' ' + partialTranscript).trim();
+    transcriptRef.current = allTranscripts.trim() || (finalTranscript + ' ' + partialTranscript).trim();
   });
 
   useSpeechRecognitionEvent('end', () => {
@@ -101,13 +94,12 @@ export const useSpeechRecognition = () => {
       
       Animated.timing(scaleAnim, { toValue: 0.9, duration: 200, useNativeDriver: true }).start();
       
-      // Reset states for a new session
       reset();
 
         STT.start({
             lang: 'en-US',
             interimResults: true,
-            continuous: true, // Keep true to allow long recordings controlled by the user
+            continuous: true,
         });
 
       setIsRecording(true);
@@ -126,7 +118,6 @@ export const useSpeechRecognition = () => {
     } catch (error)  {    
       console.error('[STT] Error stopping speech recognition:', error);
     }
-    // Return the final transcript from the ref to avoid race conditions.
     console.log(`[DEBUG] Got finalTranscript: ${transcriptRef.current}`);
     return transcriptRef.current;
   };
